@@ -9,7 +9,10 @@ export function enrichHolding(h, quote) {
   const isShort = !!h.is_short
 
   const marketValue = price != null ? shares * price : 0
-  const dayChange = price != null ? shares * dayPerShare : 0
+  // Net worth contribution: a long adds value, a short is a liability.
+  const netValue = isShort ? -marketValue : marketValue
+  // Day change: a short gains when price falls.
+  const dayChange = price != null ? (isShort ? -1 : 1) * shares * dayPerShare : 0
   const dayChangePct = quote?.dp ?? 0
 
   const costBasis = shares * avg
@@ -22,6 +25,7 @@ export function enrichHolding(h, quote) {
     ...h,
     shares, avg, price, isShort,
     marketValue,
+    netValue,
     dayChange,
     dayChangePct,
     allTimeChange,
@@ -36,7 +40,8 @@ export function computePortfolio({ cashBalance = 0, holdings = [], quotes = {} }
   const owned = enriched.filter((h) => h.shares > 0)
   const watchlist = enriched.filter((h) => h.shares === 0)
 
-  const investedValue = owned.reduce((s, h) => s + h.marketValue, 0)
+  // investedValue = net market exposure (longs positive, shorts negative).
+  const investedValue = owned.reduce((s, h) => s + h.netValue, 0)
   const totalValue = cash + investedValue
   const dayChangeDollars = owned.reduce((s, h) => s + h.dayChange, 0)
   const prevTotal = totalValue - dayChangeDollars
