@@ -3,11 +3,13 @@ import { ResponsiveContainer, AreaChart, Area, LineChart, Line, XAxis, YAxis, To
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { colors, radius, font } from '../theme'
-import { getQuotes, getHistory, getNews, searchStocks, getProfile } from '../lib/api'
+import { getQuotes, getHistory, getNews, searchStocks, getProfile, analyzeThesis } from '../lib/api'
 import { computePortfolio, fmtMoney, fmtPct } from '../lib/portfolio'
 import { isMarketOpen } from '../lib/market'
+import { daysInClass } from '../lib/dashboard'
 import { executeBuy, executeSell, executeShort, executeCover } from '../lib/trade'
 import StudentLayout from '../components/StudentLayout'
+import AskReign from '../components/AskReign'
 import { Card, Button, Input, Spinner } from '../components/ui'
 
 const chg = (n) => (Number(n) > 0 ? colors.green : Number(n) < 0 ? colors.red : colors.textMuted)
@@ -68,7 +70,8 @@ export default function Portfolio() {
 
   const p = computePortfolio({ cashBalance: portfolio?.cash_balance, holdings, quotes })
   const allowShort = !!classInfo?.allow_short_selling
-  const thesisRequired = !!classInfo?.thesis_required
+  // Thesis Validator gate: teacher-forced (Day 1) OR unlocked at Day 10.
+  const thesisActive = !!classInfo?.thesis_required || daysInClass(portfolio?.created_at) >= 10
 
   return (
     <StudentLayout>
@@ -117,7 +120,7 @@ export default function Portfolio() {
       {modal && (
         <TradeModal
           modal={modal} portfolio={portfolio} holdings={holdings} quotes={quotes}
-          p={p} allowShort={allowShort} thesisRequired={thesisRequired}
+          p={p} allowShort={allowShort} thesisActive={thesisActive}
           onClose={() => setModal(null)} onDone={afterTrade} />
       )}
       {detail && (
@@ -208,14 +211,15 @@ function ModalShell({ children, onClose, wide }) {
   )
 }
 
-function TradeModal({ modal, portfolio, holdings, quotes, p, allowShort, thesisRequired, onClose, onDone }) {
-  const [stage, setStage] = useState(modal.mode === 'search' ? 'search' : (thesisRequired && modal.ticketMode === 'buy' ? 'thesis' : 'ticket'))
+function TradeModal({ modal, portfolio, holdings, quotes, p, allowShort, thesisActive, onClose, onDone }) {
+  const [stage, setStage] = useState(modal.mode === 'search' ? 'search' : (thesisActive && modal.ticketMode === 'buy' ? 'thesis' : 'ticket'))
   const [stock, setStock] = useState(modal.stock || null)
   const [ticketMode, setTicketMode] = useState(modal.ticketMode || 'buy')
   const [existing, setExisting] = useState(modal.existing || null)
   const [price, setPrice] = useState(null)
   const [desc, setDesc] = useState('')
   const [thesis, setThesis] = useState(existing?.thesis || '')
+  const [analysis, setAnalysis] = useState(null)
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
 
@@ -233,13 +237,13 @@ function TradeModal({ modal, portfolio, holdings, quotes, p, allowShort, thesisR
     const ex = holdings.find((h) => (h.ticker || '').toUpperCase() === s.symbol.toUpperCase())
     setStock({ ticker: s.symbol, name: s.name }); setExisting(ex || null)
     setTicketMode(ex?.is_short ? 'cover' : 'buy')
-    setStage(thesisRequired ? 'thesis' : 'ticket')
+    setStage(thesisActive ? 'thesis' : 'ticket')
   }
 
   async function run(args) {
     setBusy(true); setErr('')
     let res
-    if (ticketMode === 'buy') res = await executeBuy({ supabase, portfolio, existing, ticker: stock.ticker.toUpperCase(), companyName: stock.name || stock.ticker, price, dollarAmount: args.dollars, thesis: thesisRequired ? thesis : undefined })
+    if (ticketMode === 'buy') res = await executeBuy({ supabase, portfolio, existing, ticker: stock.ticker.toUpperCase(), companyName: stock.name || stock.ticker, price, dollarAmount: args.dollars, thesis: thesisActive ? thesis : undefined, thesisAi: analysis ? JSON.stringify(analysis) : undefined })
     else if (ticketMode === 'sell') res = await executeSell({ supabase, portfolio, holding: existing, price, sharesToSell: args.shares })
     else if (ticketMode === 'short') res = await executeShort({ supabase, portfolio, existing, ticker: stock.ticker.toUpperCase(), companyName: stock.name || stock.ticker, price, dollarAmount: args.dollars })
     else if (ticketMode === 'cover') res = await executeCover({ supabase, portfolio, holding: existing, price, sharesToCover: args.shares })
@@ -253,6 +257,7 @@ function TradeModal({ modal, portfolio, holdings, quotes, p, allowShort, thesisR
       {stage === 'search' && <SearchPanel onPick={pick} onClose={onClose} />}
       {stage === 'thesis' && (
         <ThesisStep stock={stock} thesis={thesis} setThesis={setThesis}
+          analysis={analysis} setAnalysis={setAnalysis} p={p}
           onBack={() => setStage('search')} onNext={() => setStage('ticket')} />
       )}
       {stage === 'ticket' && (
@@ -297,21 +302,93 @@ function SearchPanel({ onPick }) {
   )
 }
 
-function ThesisStep({ stock, thesis, setThesis, onBack, onNext }) {
+function ThesisStep({ stock, thesis, setThesis, analysis, setAnalysis, p, onBack, onNext }) {
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
   const enough = thesis.trim().split(/[.!?]+/).filter((s) => s.trim().length > 3).length >= 2
+
+  async function analyze() {
+    setBusy(true); setErr('')
+    try {
+      const tk = stock.ticker.toUpperCase()
+      const [news, hist] = await Promise.all([
+        getNews(tk, 5).catch(() => []),
+        getHistory(tk, '1mo').then((r) => r.points || []).catch(() => []),
+      ])
+      const portfolio = (p?.owned || []).map((h) => ({
+        ticker: (h.ticker || '').toUpperCase(),
+        pct: p.totalValue > 0 ? (h.marketValue / p.totalValue) * 100 : 0,
+      }))
+      const result = await analyzeThesis({
+        ticker: tk, companyName: stock.name || tk, thesis: thesis.trim(),
+        headlines: news.map((n) => n.headline).filter(Boolean).slice(0, 5),
+        history: hist, portfolio,
+      })
+      if (!result) setErr("Reign couldn't analyze that one — you can still continue.")
+      else setAnalysis(result)
+    } catch {
+      setErr('Reign is unavailable right now — you can still continue.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
   return (
     <div>
       <h3 style={{ fontSize: 19, fontWeight: 800 }}>Why {stock.ticker}?</h3>
       <p style={{ color: colors.textMuted, fontSize: 13.5, margin: '6px 0 14px' }}>
-        Write your reasoning — at least two sentences. (AI thesis analysis arrives in the thesis build.)
+        Write your reasoning — at least two sentences. Reign will pressure-test it. You can always continue.
       </p>
-      <textarea value={thesis} onChange={(e) => setThesis(e.target.value)} rows={5}
+      <textarea value={thesis} onChange={(e) => { setThesis(e.target.value); if (analysis) setAnalysis(null) }} rows={5} disabled={busy}
         placeholder="I think it goes up because…"
         style={{ width: '100%', padding: 12, fontSize: 14.5, background: colors.bgRaised, color: colors.text, border: `1px solid ${colors.border}`, borderRadius: radius.sm, resize: 'vertical', fontFamily: font.sans }} />
+
+      {!analysis ? (
+        <Button full loading={busy} disabled={!enough || busy} onClick={analyze} style={{ marginTop: 12 }}>
+          {busy ? 'Reign is reading…' : 'Analyze with Reign'}
+        </Button>
+      ) : (
+        <ThesisAnalysis a={analysis} onRedo={() => setAnalysis(null)} />
+      )}
+      {err && <div style={{ color: colors.gold, fontSize: 13, marginTop: 10 }}>{err}</div>}
+
       <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
         <Button variant="secondary" full onClick={onBack}>Back</Button>
-        <Button full disabled={!enough} onClick={onNext}>Continue</Button>
+        <Button full disabled={!enough} onClick={onNext}>Continue to buy</Button>
       </div>
+    </div>
+  )
+}
+
+const ALIGN_META = {
+  supports: { c: colors.green, bg: colors.greenDim, label: 'News supports your thesis' },
+  contradicts: { c: colors.red, bg: colors.redDim, label: 'News cuts against your thesis' },
+  mixed: { c: colors.gold, bg: colors.goldDim, label: 'News is mixed on your thesis' },
+}
+
+function ThesisAnalysis({ a, onRedo }) {
+  const m = ALIGN_META[a.alignment] || ALIGN_META.mixed
+  return (
+    <div style={{ marginTop: 14 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 11px', borderRadius: 999, background: m.bg, color: m.c, fontSize: 12.5, fontWeight: 700 }}>
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: m.c }} /> {m.label}
+        </span>
+        {onRedo && <button onClick={onRedo} style={{ fontSize: 12.5, color: colors.textFaint }}>Edit & re-analyze</button>}
+      </div>
+      <div style={{ fontSize: 13.5, lineHeight: 1.55, color: colors.text, marginBottom: 12 }}>{a.news_assessment}</div>
+      <ThesisBit label="IF YOU'RE RIGHT" color={colors.green} text={a.if_right} />
+      <ThesisBit label="WHAT COULD GO WRONG" color={colors.red} text={a.if_wrong} />
+      <ThesisBit label="HAVE YOU CONSIDERED" color={colors.blue} text={a.blind_spot} />
+    </div>
+  )
+}
+
+function ThesisBit({ label, color, text }) {
+  return (
+    <div style={{ marginBottom: 9, padding: 11, background: colors.bgRaised, borderRadius: radius.sm, borderLeft: `2px solid ${color}` }}>
+      <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.08em', color, marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 13.5, lineHeight: 1.5, color: colors.text }}>{text}</div>
     </div>
   )
 }
@@ -438,6 +515,11 @@ function DetailDrawer({ holding, portfolio, quote, onClose, onBuyMore, onSell })
     getNews(tk, 5).then(setNews).catch(() => {})
   }, [tk])
   const owns = Number(holding.shares) > 0
+  let savedTake = null
+  try { savedTake = holding.thesis_ai_response ? JSON.parse(holding.thesis_ai_response) : null } catch { savedTake = null }
+  const askContext = `${tk} (${holding.company_name || tk}) at ${quote?.c ? fmtMoney(quote.c) : 'n/a'}${quote?.dp != null ? `, ${fmtPct(quote.dp)} today` : ''}.` +
+    (owns ? ` The student holds ${Number(holding.shares).toFixed(2)} shares, avg ${fmtMoney(holding.avg_buy_price)}.` : '') +
+    (holding.thesis ? ` Their thesis: "${holding.thesis}"` : '')
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', display: 'flex', justifyContent: 'flex-end', zIndex: 60 }}>
       <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(560px, 100%)', height: '100%', background: colors.bgElevated, borderLeft: `1px solid ${colors.border}`, overflowY: 'auto', padding: 24 }}>
@@ -484,6 +566,13 @@ function DetailDrawer({ holding, portfolio, quote, onClose, onBuyMore, onSell })
           </div>
         )}
 
+        {savedTake && (
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 11.5, fontWeight: 700, color: colors.gold, letterSpacing: '0.08em', marginBottom: 2 }}>REIGN'S TAKE</div>
+            <ThesisAnalysis a={savedTake} />
+          </div>
+        )}
+
         {news.length > 0 && (
           <div style={{ marginBottom: 16 }}>
             <div style={{ fontSize: 11.5, fontWeight: 700, color: colors.textMuted, letterSpacing: '0.08em', marginBottom: 8 }}>RECENT NEWS</div>
@@ -496,10 +585,10 @@ function DetailDrawer({ holding, portfolio, quote, onClose, onBuyMore, onSell })
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
-          <Button variant="secondary" disabled style={{ flex: 1, fontSize: 13 }}>Ask Reign (soon)</Button>
-          <Button variant="secondary" disabled style={{ flex: 1, fontSize: 13 }}>Rabbit Hole (soon)</Button>
+        <div style={{ marginBottom: 10 }}>
+          <AskReign full context={askContext} />
         </div>
+        <Button variant="secondary" disabled full style={{ fontSize: 13, marginBottom: 10 }}>Rabbit Hole (soon)</Button>
         <div style={{ display: 'flex', gap: 8 }}>
           <Button full onClick={onBuyMore}>{owns && !holding.is_short ? 'Buy more' : 'Buy'}</Button>
           {owns && <Button variant="secondary" full onClick={onSell}>{holding.is_short ? 'Cover' : 'Sell'}</Button>}

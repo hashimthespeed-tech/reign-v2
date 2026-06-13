@@ -10,6 +10,7 @@ import { nowET, getMarketStatus, getGreeting, marketStatusLabel, isMarketOpen, i
 import { detectHeroVillain, reconstructHistory, daysInClass } from '../lib/dashboard'
 import { selectPredictionStock, computeAccuracy, computeStreak } from '../lib/predictions'
 import StudentLayout from '../components/StudentLayout'
+import AskReign from '../components/AskReign'
 import { Card, Button, Spinner } from '../components/ui'
 
 const chg = (n) => (Number(n) > 0 ? colors.green : Number(n) < 0 ? colors.red : colors.textMuted)
@@ -261,6 +262,9 @@ function MoverCard({ mover, kind, onClick }) {
       </div>
       <div style={{ fontSize: 16.5, fontWeight: 700 }}>{mover.text}</div>
       <div style={{ fontSize: 12.5, color: colors.textFaint, marginTop: 6 }}>Tap to see {mover.ticker} in your portfolio →</div>
+      <div onClick={(e) => e.stopPropagation()} style={{ marginTop: 10 }}>
+        <AskReign compact context={`${mover.name} (${mover.ticker}) is ${fmtPct(mover.dp)} today — the student's ${isHero ? 'hero' : 'villain'} of the day.`} />
+      </div>
     </Card>
   )
 }
@@ -374,6 +378,9 @@ function ReportCard({ report }) {
               <div style={{ fontSize: 14, color: colors.text, lineHeight: 1.5 }}>{report.unresolved_story}</div>
             </div>
           )}
+          <div style={{ marginTop: 12 }}>
+            <AskReign context={`Today's report for this student: ${report.report_text}${report.unresolved_story ? ` What we're watching: ${report.unresolved_story}` : ''}`} />
+          </div>
         </>
       ) : (
         <div style={{ fontSize: 14.5, color: colors.textMuted, lineHeight: 1.55 }}>

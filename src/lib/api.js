@@ -1,4 +1,7 @@
 // Client wrappers around the Netlify functions. Same paths in dev & prod.
+import { THESIS_SYSTEM, buildThesisPrompt, parseThesisResponse } from './thesis'
+import { ASK_REIGN_SYSTEM, buildAskPrompt } from './askReign'
+
 const FN = '/.netlify/functions'
 
 async function get(path) {
@@ -97,4 +100,28 @@ export async function askGroq({ system, prompt, messages, temperature, max_token
     throw new Error(err.detail || err.error || `groq failed (${res.status})`)
   }
   return res.json()
+}
+
+// Thesis Validator: pressure-test a student's buy reasoning. Returns the parsed
+// analysis object, or null if the model didn't return usable JSON. Advisory only.
+export async function analyzeThesis(inputs) {
+  const { parsed } = await askGroq({
+    system: THESIS_SYSTEM,
+    prompt: buildThesisPrompt(inputs),
+    json: true,
+    temperature: 0.7,
+    max_tokens: 600,
+  })
+  return parseThesisResponse(parsed)
+}
+
+// Ask Reign: single-shot inline answer about whatever the student is viewing.
+export async function askReign(context, question) {
+  const { text } = await askGroq({
+    system: ASK_REIGN_SYSTEM,
+    prompt: buildAskPrompt(context, question),
+    temperature: 0.6,
+    max_tokens: 350,
+  })
+  return (text || '').trim()
 }
