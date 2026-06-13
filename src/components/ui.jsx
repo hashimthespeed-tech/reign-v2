@@ -170,9 +170,9 @@ export function Tabs({ tabs, active, onChange }) {
 }
 
 // ---------- Card ----------
-export function Card({ children, style = {}, glow = false }) {
+export function Card({ children, style = {}, glow = false, ...props }) {
   return (
-    <div style={{
+    <div {...props} style={{
       background: colors.bgElevated, border: `1px solid ${colors.border}`,
       borderRadius: radius.lg, boxShadow: glow ? shadow.glow : shadow.card,
       ...style,

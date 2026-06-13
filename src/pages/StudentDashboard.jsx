@@ -395,27 +395,32 @@ function ReportCard({ report }) {
 }
 
 function LockedFeatures({ joinDays, myRank }) {
+  const navigate = useNavigate()
   const items = [
     { name: 'Thesis Validator', cond: joinDays >= 10, req: 'Day 10', desc: 'AI pressure-tests your reasoning before every buy.' },
-    { name: 'Monthly Behavioral Report', cond: joinDays >= 30, req: 'Day 30', desc: 'See the investor you actually are — your patterns, exposed.' },
+    { name: 'Monthly Behavioral Report', cond: joinDays >= 30, req: 'Day 30', desc: 'See the investor you actually are — your patterns, exposed.', to: '/monthly' },
     { name: 'Class vs Class + Market Sovereign', cond: myRank === 1, req: 'Reach Rank #1', desc: 'The biggest unlock. Compete beyond your classroom.' },
   ]
   return (
     <div>
       <h3 style={{ fontSize: 15, fontWeight: 700, color: colors.textMuted, marginBottom: 12 }}>The Vault</h3>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
-        {items.map((it) => (
-          <Card key={it.name} style={{ padding: 16, opacity: it.cond ? 1 : 0.6, border: `1px solid ${it.cond ? colors.goldDim : colors.border}` }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-              <span style={{ fontWeight: 700, fontSize: 14.5 }}>{it.name}</span>
-              <span style={{ fontSize: 16 }}>{it.cond ? '✓' : '🔒'}</span>
-            </div>
-            <div style={{ fontSize: 12.5, color: colors.textFaint, lineHeight: 1.4 }}>{it.desc}</div>
-            <div style={{ fontSize: 11.5, fontWeight: 700, color: it.cond ? colors.green : colors.gold, marginTop: 8 }}>
-              {it.cond ? 'UNLOCKED' : it.req}
-            </div>
-          </Card>
-        ))}
+        {items.map((it) => {
+          const open = it.cond && it.to
+          return (
+            <Card key={it.name} onClick={open ? () => navigate(it.to) : undefined}
+              style={{ padding: 16, opacity: it.cond ? 1 : 0.6, border: `1px solid ${it.cond ? colors.goldDim : colors.border}`, cursor: open ? 'pointer' : 'default' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <span style={{ fontWeight: 700, fontSize: 14.5 }}>{it.name}</span>
+                <span style={{ fontSize: 16 }}>{it.cond ? '✓' : '🔒'}</span>
+              </div>
+              <div style={{ fontSize: 12.5, color: colors.textFaint, lineHeight: 1.4 }}>{it.desc}</div>
+              <div style={{ fontSize: 11.5, fontWeight: 700, color: it.cond ? colors.green : colors.gold, marginTop: 8 }}>
+                {open ? 'OPEN →' : it.cond ? 'UNLOCKED' : it.req}
+              </div>
+            </Card>
+          )
+        })}
       </div>
     </div>
   )

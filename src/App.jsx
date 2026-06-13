@@ -10,6 +10,7 @@ import StudentDashboard from './pages/StudentDashboard'
 import ComingSoon from './pages/ComingSoon'
 import Portfolio from './pages/Portfolio'
 import Leaderboard from './pages/Leaderboard'
+import MonthlyReport from './pages/MonthlyReport'
 
 function FullSpinner() {
   return (
@@ -51,6 +52,7 @@ export default function App() {
         <Route path="/dashboard" element={<StudentRoute><StudentDashboard /></StudentRoute>} />
         <Route path="/portfolio" element={<StudentRoute><Portfolio /></StudentRoute>} />
         <Route path="/leaderboard" element={<StudentRoute><Leaderboard /></StudentRoute>} />
+        <Route path="/monthly" element={<StudentRoute><MonthlyReport /></StudentRoute>} />
         <Route path="/learning" element={<StudentRoute><ComingSoon title="Learning" blurb="Your arsenal of investing concepts, unlocked as you level up from Watcher to Investor. Arrives in the learning build." /></StudentRoute>} />
         <Route path="/settings" element={<StudentRoute><ComingSoon title="Settings" blurb="Profile, display, and the real-money transition when you're ready. Arrives in the settings build." /></StudentRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
