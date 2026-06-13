@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
@@ -9,8 +9,19 @@ import { BootScreen, WelcomeScreen, AuthStep } from './parts'
 
 export default function TeacherOnboarding() {
   const navigate = useNavigate()
-  const { user, refreshProfile } = useAuth()
+  const { user, profile, loading, refreshProfile } = useAuth()
   const [step, setStep] = useState(0)
+
+  // A returning teacher (already signed in with a profile) using "+ New class"
+  // jumps straight to class config — skip boot/welcome/auth/profile.
+  const jumped = useRef(false)
+  useEffect(() => {
+    if (loading || jumped.current) return
+    if (user && profile?.investor_type === 'teacher') {
+      jumped.current = true
+      setStep(4)
+    }
+  }, [loading, user, profile])
 
   // collected data
   const [classConfig, setClassConfig] = useState({
