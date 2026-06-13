@@ -70,6 +70,21 @@ export async function generateReport({ userId, force } = {}) {
   }
 }
 
+// Generate (or fetch existing) this week's class narrative. Idempotent per week.
+export async function generateNarrative({ classId, force } = {}) {
+  try {
+    const res = await fetch(`${FN}/generate-narrative`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ classId, force }),
+    })
+    if (!res.ok) return { skipped: 'error' }
+    return res.json()
+  } catch {
+    return { skipped: 'error' }
+  }
+}
+
 // Generic AI call. Returns { text, parsed, usage }.
 export async function askGroq({ system, prompt, messages, temperature, max_tokens, json } = {}) {
   const res = await fetch(`${FN}/groq`, {

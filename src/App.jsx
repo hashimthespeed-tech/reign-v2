@@ -9,6 +9,7 @@ import TeacherDashboard from './pages/TeacherDashboard'
 import StudentDashboard from './pages/StudentDashboard'
 import ComingSoon from './pages/ComingSoon'
 import Portfolio from './pages/Portfolio'
+import Leaderboard from './pages/Leaderboard'
 
 function FullSpinner() {
   return (
@@ -49,7 +50,7 @@ export default function App() {
         <Route path="/teacher" element={<TeacherRoute><TeacherDashboard /></TeacherRoute>} />
         <Route path="/dashboard" element={<StudentRoute><StudentDashboard /></StudentRoute>} />
         <Route path="/portfolio" element={<StudentRoute><Portfolio /></StudentRoute>} />
-        <Route path="/leaderboard" element={<StudentRoute><ComingSoon title="Leaderboard" blurb="Your class, ranked. Rivals, streaks, weekly narratives, and the race to #1. Arrives in the leaderboard build." /></StudentRoute>} />
+        <Route path="/leaderboard" element={<StudentRoute><Leaderboard /></StudentRoute>} />
         <Route path="/learning" element={<StudentRoute><ComingSoon title="Learning" blurb="Your arsenal of investing concepts, unlocked as you level up from Watcher to Investor. Arrives in the learning build." /></StudentRoute>} />
         <Route path="/settings" element={<StudentRoute><ComingSoon title="Settings" blurb="Profile, display, and the real-money transition when you're ready. Arrives in the settings build." /></StudentRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
