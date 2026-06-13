@@ -19,8 +19,8 @@ decisions are logged in `C:\Users\hashi\projects\.decisions.md`.
 | 11 | Rabbit Hole | ✅ done | `f0ae760` |
 | 12 | Monthly Behavioral Report | ✅ done | `26fa5fe` |
 | 13 | Learning page + feature-unlock progression (cinematic events) | ✅ done | `f2cc0a5` |
-| 14 | **Settings page (incl. real-money transition)** | 🔨 next | — |
-| 15 | Landing page — extraordinary rebuild (10 functional sections) | ⏳ planned | — |
+| 14 | Settings page (incl. real-money transition) | ✅ done | `61edab1` |
+| 15 | **Landing page — extraordinary rebuild (10 functional sections)** | 🔨 next | — |
 | 16 | Mobile responsive across all pages | ⏳ planned | — |
 | 17 | RLS audit + security review + performance review + final bug sweep | ⏳ planned | — |
 
