@@ -105,6 +105,20 @@ export async function generateMonthly({ userId, force } = {}) {
   }
 }
 
+// Today's Concept tie-in: one sentence connecting a concept to the student's
+// actual holdings / today's market. Single-shot; the page caches it per day.
+export async function conceptTieIn(concept, holdings = []) {
+  const system =
+    "You are Reign, an investing coach in a high-school stock simulator. Connect today's investing " +
+    "concept to what the student is actually holding or to today's market in ONE punchy sentence. " +
+    "Plain language a 16-year-old respects, no fluff, no exclamation marks, no buy/sell advice."
+  const prompt = `Concept: ${concept.plain_english_name || concept.name} — ${concept.hook}
+Student's holdings: ${holdings.length ? holdings.join(', ') : 'none yet'}
+Write ONE sentence connecting this concept to their holdings (or today's market if they hold nothing).`
+  const { text } = await askGroq({ system, prompt, temperature: 0.7, max_tokens: 120 })
+  return (text || '').trim()
+}
+
 // Generic AI call. Returns { text, parsed, usage }.
 export async function askGroq({ system, prompt, messages, temperature, max_tokens, json } = {}) {
   const res = await fetch(`${FN}/groq`, {

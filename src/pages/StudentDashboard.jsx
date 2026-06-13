@@ -12,6 +12,8 @@ import { selectPredictionStock, computeAccuracy, computeStreak } from '../lib/pr
 import StudentLayout from '../components/StudentLayout'
 import AskReign from '../components/AskReign'
 import RabbitHole from '../components/RabbitHole'
+import CinematicUnlock from '../components/CinematicUnlock'
+import { pendingCinematics } from '../lib/learning'
 import { Card, Button, Spinner } from '../components/ui'
 
 const chg = (n) => (Number(n) > 0 ? colors.green : Number(n) < 0 ? colors.red : colors.textMuted)
@@ -28,6 +30,7 @@ export default function StudentDashboard() {
   const [standings, setStandings] = useState([])
   const [report, setReport] = useState(null)
   const [predictions, setPredictions] = useState([])
+  const [cinematicQueue, setCinematicQueue] = useState([])
   const etRef = useRef(nowET())
 
   // initial load
@@ -72,6 +75,13 @@ export default function StudentDashboard() {
       const { data: st } = await supabase.rpc('class_standings')
       if (!cancelled) setStandings(st || [])
 
+      // cinematic unlocks: fire once per milestone newly reached
+      const jd = daysInClass(pf?.created_at)
+      const myR = (st || []).findIndex((s) => s.user_id === user.id) + 1
+      const { data: unlockRows } = await supabase.from('unlocks').select('unlock_type').eq('user_id', user.id)
+      const seen = (unlockRows || []).map((u) => u.unlock_type)
+      if (!cancelled) setCinematicQueue(pendingCinematics({ daysInClass: jd, rank: myR }, seen))
+
       if (!cancelled) setLoading(false)
     })()
     return () => { cancelled = true }
@@ -101,6 +111,12 @@ export default function StudentDashboard() {
     return { error }
   }
 
+  async function dismissCinematic() {
+    const type = cinematicQueue[0]
+    if (type) await supabase.from('unlocks').upsert({ user_id: user.id, unlock_type: type, seen_by_user: true }, { onConflict: 'user_id,unlock_type' })
+    setCinematicQueue((q) => q.slice(1))
+  }
+
   if (loading) {
     return <StudentLayout><div style={{ display: 'flex', justifyContent: 'center', padding: 80 }}><Spinner size={30} /></div></StudentLayout>
   }
@@ -120,6 +136,8 @@ export default function StudentDashboard() {
 
   return (
     <StudentLayout>
+      {cinematicQueue.length > 0 && <CinematicUnlock type={cinematicQueue[0]} onDismiss={dismissCinematic} />}
+
       {/* Greeting row */}
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-end', gap: 14, marginBottom: 22 }}>
         <div>
