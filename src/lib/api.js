@@ -40,6 +40,21 @@ export async function getProfile(symbol) {
   return profile || null
 }
 
+// Resolve a user's (or class's) unresolved predictions server-side. Best-effort.
+export async function resolvePredictions({ userId, classId } = {}) {
+  try {
+    const res = await fetch(`${FN}/resolve-predictions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, classId }),
+    })
+    if (!res.ok) return { resolved: 0 }
+    return res.json()
+  } catch {
+    return { resolved: 0 }
+  }
+}
+
 // Generic AI call. Returns { text, parsed, usage }.
 export async function askGroq({ system, prompt, messages, temperature, max_tokens, json } = {}) {
   const res = await fetch(`${FN}/groq`, {

@@ -4,10 +4,11 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'rec
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { colors, radius, font } from '../theme'
-import { getQuotes, getHistory } from '../lib/api'
+import { getQuotes, getHistory, resolvePredictions } from '../lib/api'
 import { computePortfolio, fmtMoney, fmtPct } from '../lib/portfolio'
 import { nowET, getMarketStatus, getGreeting, marketStatusLabel, isMarketOpen, isPredictionWindowOpen } from '../lib/market'
 import { detectHeroVillain, reconstructHistory, daysInClass } from '../lib/dashboard'
+import { selectPredictionStock, computeAccuracy, computeStreak } from '../lib/predictions'
 import StudentLayout from '../components/StudentLayout'
 import { Card, Button, Spinner } from '../components/ui'
 
@@ -24,6 +25,7 @@ export default function StudentDashboard() {
   const [classInfo, setClassInfo] = useState(null)
   const [standings, setStandings] = useState([])
   const [report, setReport] = useState(null)
+  const [predictions, setPredictions] = useState([])
   const etRef = useRef(nowET())
 
   // initial load
@@ -55,6 +57,12 @@ export default function StudentDashboard() {
         .select('*').eq('user_id', user.id).order('report_date', { ascending: false }).limit(1).maybeSingle()
       if (!cancelled) setReport(rep || null)
 
+      // resolve any finished predictions server-side, then load them
+      await resolvePredictions({ userId: user.id })
+      const { data: preds } = await supabase.from('predictions')
+        .select('*').eq('user_id', user.id).order('prediction_date', { ascending: false })
+      if (!cancelled) setPredictions(preds || [])
+
       // store own live value + fetch rank
       const computed = computePortfolio({ cashBalance: pf?.cash_balance, holdings: hs || [], quotes: q || {} })
       if (pf) await supabase.from('portfolios').update({ last_value: computed.totalValue, last_value_at: new Date().toISOString() }).eq('id', pf.id)
@@ -80,6 +88,16 @@ export default function StudentDashboard() {
     return () => clearInterval(id)
   }, [refreshQuotes])
 
+  async function makePrediction(ticker, direction) {
+    const row = {
+      user_id: user.id, class_id: portfolio.class_id, ticker,
+      direction, prediction_date: etRef.current.dateStr,
+    }
+    const { data, error } = await supabase.from('predictions').insert(row).select().single()
+    if (!error && data) setPredictions((prev) => [data, ...prev])
+    return { error }
+  }
+
   if (loading) {
     return <StudentLayout><div style={{ display: 'flex', justifyContent: 'center', padding: 80 }}><Spinner size={30} /></div></StudentLayout>
   }
@@ -92,6 +110,10 @@ export default function StudentDashboard() {
   const et = etRef.current
   const status = getMarketStatus(et)
   const joinDays = daysInClass(portfolio?.created_at)
+  const predictStock = selectPredictionStock(p.owned, histories)
+  const todaysPrediction = predictions.find((d) => d.prediction_date === et.dateStr) || null
+  const acc = computeAccuracy(predictions)
+  const streak = computeStreak(predictions)
 
   return (
     <StudentLayout>
@@ -172,7 +194,8 @@ export default function StudentDashboard() {
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 14, marginBottom: 18 }}>
-        <PredictionCard classInfo={classInfo} et={et} />
+        <PredictionCard classInfo={classInfo} et={et} stock={predictStock}
+          today={todaysPrediction} acc={acc} streak={streak} onPredict={makePrediction} />
         <ReportCard report={report} />
       </div>
 
@@ -241,37 +264,81 @@ function MoverCard({ mover, kind, onClick }) {
   )
 }
 
-function PredictionCard({ classInfo, et }) {
+function PredictionCard({ classInfo, et, stock, today, acc, streak, onPredict }) {
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
   const windowOpen = isPredictionWindowOpen(et)
   const required = classInfo?.require_predictions !== false
+
+  async function call(direction) {
+    if (!stock) return
+    setBusy(true); setErr('')
+    const { error } = await onPredict((stock.ticker || '').toUpperCase(), direction)
+    setBusy(false)
+    if (error) setErr(error.code === '23505' ? 'You already predicted today.' : 'Could not lock in.')
+  }
+
   return (
     <Card style={{ padding: 20 }}>
-      <div style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '0.1em', color: colors.gold, marginBottom: 10 }}>
-        DAILY PREDICTION
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+        <span style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '0.1em', color: colors.gold }}>DAILY PREDICTION</span>
+        {acc?.pct != null && (
+          <span style={{ fontSize: 12, color: colors.textFaint }}>
+            {acc.correct}/{acc.total} correct{streak > 0 ? ` · ${streak}🔥` : ''}
+          </span>
+        )}
       </div>
-      {windowOpen ? (
+
+      {today ? (
+        <LockedPrediction today={today} />
+      ) : !stock ? (
+        <div style={{ fontSize: 14.5, color: colors.textMuted, lineHeight: 1.5 }}>
+          Buy a stock first — your daily call comes from your own portfolio.
+        </div>
+      ) : windowOpen && required ? (
         <>
-          <div style={{ fontSize: 16, fontWeight: 600 }}>The market opens soon. Call one of your stocks.</div>
-          <div style={{ fontSize: 13, color: colors.textFaint, marginTop: 6 }}>
-            Up or down — lock it in before 9:30 AM ET. Streaks and accuracy feed your rank.
+          <div style={{ fontSize: 15.5, fontWeight: 600 }}>
+            Which way does <span style={{ fontFamily: font.mono, color: colors.gold }}>{stock.ticker}</span> close today?
           </div>
+          <div style={{ fontSize: 12.5, color: colors.textFaint, marginTop: 5 }}>Locks at 9:30 AM ET. You can't change it.</div>
+          <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+            <Button full loading={busy} onClick={() => call('up')} style={{ background: colors.greenDim, color: colors.greenSoft, border: `1px solid ${colors.green}` }}>▲ Up</Button>
+            <Button full loading={busy} onClick={() => call('down')} style={{ background: colors.redDim, color: colors.redSoft, border: `1px solid ${colors.red}` }}>▼ Down</Button>
+          </div>
+          {err && <div style={{ color: colors.red, fontSize: 13, marginTop: 10 }}>{err}</div>}
         </>
       ) : (
         <>
-          <div style={{ fontSize: 16, fontWeight: 600 }}>
+          <div style={{ fontSize: 15.5, fontWeight: 600 }}>
             {required ? 'Your next call opens at 6:00 AM ET.' : 'Predictions are optional in this class.'}
           </div>
-          <div style={{ fontSize: 13, color: colors.textFaint, marginTop: 6 }}>
-            Predict one portfolio stock each market morning. Build a streak, climb the board.
+          <div style={{ fontSize: 12.5, color: colors.textFaint, marginTop: 6 }}>
+            Tomorrow Reign will ask about <span style={{ fontFamily: font.mono }}>{stock.ticker}</span> or another of your holdings.
           </div>
         </>
       )}
-      <div style={{ marginTop: 14 }}>
-        <Button variant="secondary" disabled style={{ fontSize: 13.5, padding: '9px 16px' }}>
-          Lock-in arrives in the prediction build
-        </Button>
-      </div>
     </Card>
+  )
+}
+
+function LockedPrediction({ today }) {
+  const dirLabel = today.direction === 'up' ? '▲ Up' : '▼ Down'
+  const resolved = !!today.result
+  const correct = today.result === 'correct'
+  return (
+    <div>
+      <div style={{ fontSize: 15.5, fontWeight: 600 }}>
+        You called <span style={{ fontFamily: font.mono, color: colors.gold }}>{today.ticker}</span> {dirLabel}.
+      </div>
+      {resolved ? (
+        <div style={{ marginTop: 10, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 999, background: correct ? colors.greenDim : colors.redDim, color: correct ? colors.greenSoft : colors.redSoft, fontWeight: 700, fontSize: 13.5 }}>
+          {correct ? '✓ Correct' : '✗ Missed it'}
+          {today.opening_price != null && <span style={{ fontWeight: 400, color: colors.textFaint }}>· {fmtMoney(today.opening_price)} → {fmtMoney(today.closing_price)}</span>}
+        </div>
+      ) : (
+        <div style={{ fontSize: 12.5, color: colors.textFaint, marginTop: 8 }}>Locked in. Result drops after market close.</div>
+      )}
+    </div>
   )
 }
 
