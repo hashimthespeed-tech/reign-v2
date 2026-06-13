@@ -17,8 +17,8 @@ decisions are logged in `C:\Users\hashi\projects\.decisions.md`.
 | 9 | Leaderboard + weekly class narrative | ✅ done | `61e7bf4` |
 | 10 | Thesis Validator + Ask Reign | ✅ done | `9165d41` |
 | 11 | Rabbit Hole | ✅ done | `f0ae760` |
-| 12 | **Monthly Behavioral Report** | 🔨 next | — |
-| 13 | Learning page + feature-unlock progression (cinematic events) | ⏳ planned | — |
+| 12 | Monthly Behavioral Report | ✅ done | `26fa5fe` |
+| 13 | **Learning page + feature-unlock progression (cinematic events)** | 🔨 next | — |
 | 14 | Settings page (incl. real-money transition) | ⏳ planned | — |
 | 15 | Landing page — extraordinary rebuild (10 functional sections) | ⏳ planned | — |
 | 16 | Mobile responsive across all pages | ⏳ planned | — |
