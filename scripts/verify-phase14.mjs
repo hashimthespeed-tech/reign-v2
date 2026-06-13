@@ -55,6 +55,43 @@ try {
     cfgSet.find((b) => b.key === 'robinhood').url === 'https://r.example' ? ok('affiliateConfig: env url passed through') : bad('affiliate env not read')
     cfgSet.every((b) => b.name && b.bonus) ? ok('every broker card has name + bonus copy') : bad('broker card missing copy')
   }
+
+  step('2. delete-account hard-deletes the caller (needs dev server + SUPABASE_SERVICE_ROLE)')
+  {
+    const anon = createClient(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_ANON_KEY, { auth: { persistSession: false } })
+    const admin = (env.SUPABASE_URL && env.SUPABASE_SERVICE_ROLE)
+      ? createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE, { auth: { persistSession: false } })
+      : null
+    if (!admin) { bad('SUPABASE_URL/SUPABASE_SERVICE_ROLE missing from .env — cannot verify deletion') }
+    else {
+      const email = `p14-del-${ts}@reigntest.dev`
+      const { data: s } = await anon.auth.signUp({ email, password: PW })
+      const token = s?.session?.access_token
+      const uid = s?.user?.id
+      if (!token || !uid) { bad('signUp returned no session (email confirmation ON?)') }
+      else {
+        await anon.from('profiles').upsert({ id: uid, username: `del_${ts}`, investor_type: 'cautious' })
+        const { data: before } = await admin.from('profiles').select('id').eq('id', uid).maybeSingle()
+        before ? ok('seeded profile row exists pre-delete') : bad('seed profile missing')
+
+        // Reject missing token
+        const noTok = await fetch(`${FN}/delete-account`, { method: 'POST' })
+        noTok.status === 401 ? ok('rejects request with no token (401)') : bad(`expected 401, got ${noTok.status}`)
+
+        // Real deletion
+        const res = await fetch(`${FN}/delete-account`, {
+          method: 'POST', headers: { Authorization: `Bearer ${token}` },
+        })
+        const out = await res.json().catch(() => ({}))
+        res.ok && out.ok ? ok('delete-account returned ok') : bad('delete-account failed', out)
+
+        const { data: gone } = await admin.from('profiles').select('id').eq('id', uid).maybeSingle()
+        gone === null ? ok('profile row gone after delete (cascade)') : bad('profile row still present')
+        const { data: au } = await admin.auth.admin.getUserById(uid)
+        !au?.user ? ok('auth user gone after delete') : bad('auth user still present')
+      }
+    }
+  }
 } catch (e) { console.error('Unexpected:', e) }
 
 console.log(`\n\x1b[1mRESULT:\x1b[0m \x1b[32m${pass} passed\x1b[0m, \x1b[31m${fail} failed\x1b[0m`)
