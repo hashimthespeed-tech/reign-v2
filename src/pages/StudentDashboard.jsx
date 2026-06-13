@@ -4,7 +4,7 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'rec
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { colors, radius, font } from '../theme'
-import { getQuotes, getHistory, resolvePredictions } from '../lib/api'
+import { getQuotes, getHistory, resolvePredictions, generateReport } from '../lib/api'
 import { computePortfolio, fmtMoney, fmtPct } from '../lib/portfolio'
 import { nowET, getMarketStatus, getGreeting, marketStatusLabel, isMarketOpen, isPredictionWindowOpen } from '../lib/market'
 import { detectHeroVillain, reconstructHistory, daysInClass } from '../lib/dashboard'
@@ -52,7 +52,8 @@ export default function StudentDashboard() {
       setQuotes(q || {})
       setHistories(Object.fromEntries(histResults))
 
-      // today's report (if generated yet)
+      // generate today's report if the market has closed (self-gates), then load latest
+      await generateReport({ userId: user.id })
       const { data: rep } = await supabase.from('daily_reports')
         .select('*').eq('user_id', user.id).order('report_date', { ascending: false }).limit(1).maybeSingle()
       if (!cancelled) setReport(rep || null)
@@ -358,6 +359,20 @@ function ReportCard({ report }) {
             <button onClick={() => setOpen(!open)} style={{ color: colors.gold, fontSize: 13, fontWeight: 600, marginTop: 10 }}>
               {open ? 'Show less' : 'Read full report'}
             </button>
+          )}
+
+          {open && report.concept_name && (
+            <div style={{ marginTop: 14, padding: 12, background: colors.bgRaised, borderRadius: radius.sm }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: colors.blue, letterSpacing: '0.08em', marginBottom: 4 }}>CONCEPT · {report.concept_name.toUpperCase()}</div>
+              <div style={{ fontSize: 13.5, color: colors.textMuted, lineHeight: 1.5 }}>{report.concept_definition}</div>
+            </div>
+          )}
+
+          {report.unresolved_story && (
+            <div style={{ marginTop: 12, padding: 13, borderRadius: radius.sm, border: `1px solid ${colors.gold}`, background: colors.goldDim }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: colors.gold, letterSpacing: '0.08em', marginBottom: 4 }}>WHAT WE'RE WATCHING</div>
+              <div style={{ fontSize: 14, color: colors.text, lineHeight: 1.5 }}>{report.unresolved_story}</div>
+            </div>
           )}
         </>
       ) : (

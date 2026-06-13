@@ -55,6 +55,21 @@ export async function resolvePredictions({ userId, classId } = {}) {
   }
 }
 
+// Generate (or fetch existing) today's daily report. Self-gates to after close.
+export async function generateReport({ userId, force } = {}) {
+  try {
+    const res = await fetch(`${FN}/generate-report`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, force }),
+    })
+    if (!res.ok) return { skipped: 'error' }
+    return res.json()
+  } catch {
+    return { skipped: 'error' }
+  }
+}
+
 // Generic AI call. Returns { text, parsed, usage }.
 export async function askGroq({ system, prompt, messages, temperature, max_tokens, json } = {}) {
   const res = await fetch(`${FN}/groq`, {
