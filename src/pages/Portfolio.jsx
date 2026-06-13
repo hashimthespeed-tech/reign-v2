@@ -10,6 +10,7 @@ import { daysInClass } from '../lib/dashboard'
 import { executeBuy, executeSell, executeShort, executeCover } from '../lib/trade'
 import StudentLayout from '../components/StudentLayout'
 import AskReign from '../components/AskReign'
+import RabbitHole from '../components/RabbitHole'
 import { Card, Button, Input, Spinner } from '../components/ui'
 
 const chg = (n) => (Number(n) > 0 ? colors.green : Number(n) < 0 ? colors.red : colors.textMuted)
@@ -520,6 +521,8 @@ function DetailDrawer({ holding, portfolio, quote, onClose, onBuyMore, onSell })
   const askContext = `${tk} (${holding.company_name || tk}) at ${quote?.c ? fmtMoney(quote.c) : 'n/a'}${quote?.dp != null ? `, ${fmtPct(quote.dp)} today` : ''}.` +
     (owns ? ` The student holds ${Number(holding.shares).toFixed(2)} shares, avg ${fmtMoney(holding.avg_buy_price)}.` : '') +
     (holding.thesis ? ` Their thesis: "${holding.thesis}"` : '')
+  const rhDepth = daysInClass(portfolio?.created_at) >= 30 ? 7 : 4
+  const moveEvent = `${tk} (${holding.company_name || tk}) is ${quote?.dp != null ? `${fmtPct(quote.dp)} today` : 'moving today'}`
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', display: 'flex', justifyContent: 'flex-end', zIndex: 60 }}>
       <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(560px, 100%)', height: '100%', background: colors.bgElevated, borderLeft: `1px solid ${colors.border}`, overflowY: 'auto', padding: 24 }}>
@@ -577,18 +580,23 @@ function DetailDrawer({ holding, portfolio, quote, onClose, onBuyMore, onSell })
           <div style={{ marginBottom: 16 }}>
             <div style={{ fontSize: 11.5, fontWeight: 700, color: colors.textMuted, letterSpacing: '0.08em', marginBottom: 8 }}>RECENT NEWS</div>
             {news.map((n, i) => (
-              <a key={i} href={n.url} target="_blank" rel="noreferrer" style={{ display: 'block', padding: '8px 0', borderTop: i ? `1px solid ${colors.border}` : 'none', fontSize: 13.5, color: colors.text }}>
-                {n.headline}
-                <span style={{ display: 'block', fontSize: 11.5, color: colors.textFaint, marginTop: 2 }}>{n.source}</span>
-              </a>
+              <div key={i} style={{ padding: '10px 0', borderTop: i ? `1px solid ${colors.border}` : 'none' }}>
+                <a href={n.url} target="_blank" rel="noreferrer" style={{ display: 'block', fontSize: 13.5, color: colors.text }}>
+                  {n.headline}
+                  <span style={{ display: 'block', fontSize: 11.5, color: colors.textFaint, marginTop: 2 }}>{n.source}</span>
+                </a>
+                <div style={{ marginTop: 6 }}>
+                  <RabbitHole compact event={n.headline} depth={rhDepth} />
+                </div>
+              </div>
             ))}
           </div>
         )}
 
-        <div style={{ marginBottom: 10 }}>
+        <div style={{ display: 'grid', gap: 8, marginBottom: 10 }}>
           <AskReign full context={askContext} />
+          <RabbitHole full event={moveEvent} depth={rhDepth} />
         </div>
-        <Button variant="secondary" disabled full style={{ fontSize: 13, marginBottom: 10 }}>Rabbit Hole (soon)</Button>
         <div style={{ display: 'flex', gap: 8 }}>
           <Button full onClick={onBuyMore}>{owns && !holding.is_short ? 'Buy more' : 'Buy'}</Button>
           {owns && <Button variant="secondary" full onClick={onSell}>{holding.is_short ? 'Cover' : 'Sell'}</Button>}

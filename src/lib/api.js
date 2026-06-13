@@ -1,6 +1,7 @@
 // Client wrappers around the Netlify functions. Same paths in dev & prod.
 import { THESIS_SYSTEM, buildThesisPrompt, parseThesisResponse } from './thesis'
 import { ASK_REIGN_SYSTEM, buildAskPrompt } from './askReign'
+import { RABBIT_HOLE_SYSTEM, buildRabbitPrompt, parseChain } from './rabbitHole'
 
 const FN = '/.netlify/functions'
 
@@ -124,4 +125,17 @@ export async function askReign(context, question) {
     max_tokens: 350,
   })
   return (text || '').trim()
+}
+
+// Rabbit Hole: cause-and-effect chain behind a market event. `depth` levels
+// (4 for Watcher/Trader, 7 after Day 30). Returns the chain array or null.
+export async function rabbitHole(event, depth = 4) {
+  const { parsed } = await askGroq({
+    system: RABBIT_HOLE_SYSTEM,
+    prompt: buildRabbitPrompt(event, depth),
+    json: true,
+    temperature: 0.7,
+    max_tokens: 700,
+  })
+  return parseChain(parsed, depth)
 }

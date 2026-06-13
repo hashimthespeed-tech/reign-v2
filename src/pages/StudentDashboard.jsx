@@ -11,6 +11,7 @@ import { detectHeroVillain, reconstructHistory, daysInClass } from '../lib/dashb
 import { selectPredictionStock, computeAccuracy, computeStreak } from '../lib/predictions'
 import StudentLayout from '../components/StudentLayout'
 import AskReign from '../components/AskReign'
+import RabbitHole from '../components/RabbitHole'
 import { Card, Button, Spinner } from '../components/ui'
 
 const chg = (n) => (Number(n) > 0 ? colors.green : Number(n) < 0 ? colors.red : colors.textMuted)
@@ -190,8 +191,8 @@ export default function StudentDashboard() {
       {/* Hero / villain */}
       {(hero || villain) && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 14, marginBottom: 18 }}>
-          {hero && <MoverCard mover={hero} kind="hero" onClick={() => navigate('/portfolio')} />}
-          {villain && <MoverCard mover={villain} kind="villain" onClick={() => navigate('/portfolio')} />}
+          {hero && <MoverCard mover={hero} kind="hero" depth={joinDays >= 30 ? 7 : 4} onClick={() => navigate('/portfolio')} />}
+          {villain && <MoverCard mover={villain} kind="villain" depth={joinDays >= 30 ? 7 : 4} onClick={() => navigate('/portfolio')} />}
         </div>
       )}
 
@@ -249,7 +250,7 @@ function MiniStat({ label, value }) {
   )
 }
 
-function MoverCard({ mover, kind, onClick }) {
+function MoverCard({ mover, kind, depth = 4, onClick }) {
   const isHero = kind === 'hero'
   const c = isHero ? colors.green : colors.red
   return (
@@ -262,8 +263,9 @@ function MoverCard({ mover, kind, onClick }) {
       </div>
       <div style={{ fontSize: 16.5, fontWeight: 700 }}>{mover.text}</div>
       <div style={{ fontSize: 12.5, color: colors.textFaint, marginTop: 6 }}>Tap to see {mover.ticker} in your portfolio →</div>
-      <div onClick={(e) => e.stopPropagation()} style={{ marginTop: 10 }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ marginTop: 10, display: 'grid', gap: 8 }}>
         <AskReign compact context={`${mover.name} (${mover.ticker}) is ${fmtPct(mover.dp)} today — the student's ${isHero ? 'hero' : 'villain'} of the day.`} />
+        <RabbitHole compact event={`${mover.name} (${mover.ticker}) is ${fmtPct(mover.dp)} today`} depth={depth} />
       </div>
     </Card>
   )
