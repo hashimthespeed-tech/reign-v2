@@ -40,13 +40,26 @@ export default function DashboardMockup({
     setIsHovered(false);
   }, []);
 
-  // Build SVG chart path from chartPoints
+  // Build a SMOOTH SVG chart path from chartPoints (Catmull-Rom → cubic bézier),
+  // matching the reference's curved area chart rather than straight segments.
   const chartSvg = useMemo(() => {
     if (!chartPoints || chartPoints.length < 2) return { pathD: 'M 0 80 L 400 80', areaD: 'M 0 80 L 400 80 L 400 120 L 0 120 Z' };
     const width = 400;
     const height = 120;
     const step = width / (chartPoints.length - 1);
-    const pathD = chartPoints.reduce((acc, y, i) => acc + (i === 0 ? `M 0 ${y}` : ` L ${i * step} ${y}`), '');
+    const pts = chartPoints.map((y, i) => ({ x: i * step, y }));
+    let pathD = `M ${pts[0].x} ${pts[0].y}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i - 1] || pts[i];
+      const p1 = pts[i];
+      const p2 = pts[i + 1];
+      const p3 = pts[i + 2] || p2;
+      const cp1x = p1.x + (p2.x - p0.x) / 6;
+      const cp1y = p1.y + (p2.y - p0.y) / 6;
+      const cp2x = p2.x - (p3.x - p1.x) / 6;
+      const cp2y = p2.y - (p3.y - p1.y) / 6;
+      pathD += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
+    }
     const areaD = `${pathD} L ${width} ${height} L 0 ${height} Z`;
     const last = chartPoints[chartPoints.length - 1];
     const prev = chartPoints[chartPoints.length - 2];
@@ -193,7 +206,7 @@ export default function DashboardMockup({
         >
           <defs>
             <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={chartSvg.isUp ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'} />
+              <stop offset="0%" stopColor={chartSvg.isUp ? 'rgba(16,185,129,0.32)' : 'rgba(239,68,68,0.32)'} />
               <stop offset="100%" stopColor={chartSvg.isUp ? 'rgba(16,185,129,0)' : 'rgba(239,68,68,0)'} />
             </linearGradient>
           </defs>
