@@ -20,7 +20,7 @@ decisions are logged in `C:\Users\hashi\projects\.decisions.md`.
 | 12 | Monthly Behavioral Report | ✅ done | `26fa5fe` |
 | 13 | Learning page + feature-unlock progression (cinematic events) | ✅ done | `f2cc0a5` |
 | 14 | Settings page (incl. real-money transition) | ✅ done | `61edab1` |
-| 15 | **Landing page — extraordinary rebuild (10 functional sections)** | 🔨 next | — |
+| 15 | **Landing page — "Network Vista" rebuild (Hero + Features + Steps + CTA)** | 🔨 in progress | — |
 | 16 | Mobile responsive across all pages | ⏳ planned | — |
 | 17 | RLS audit + security review + performance review + final bug sweep | ⏳ planned | — |
 
@@ -97,13 +97,32 @@ decisions are logged in `C:\Users\hashi\projects\.decisions.md`.
   Robinhood / Vanguard / Fidelity with signup bonuses and affiliate links from env vars.
 - **Account:** change password; change email; delete account.
 
-## Phase 15 — Landing Page (extraordinary rebuild)
-10 functional sections: Hero with real stock ticker + two CTAs; Live Demo with three
-interactive tabs (Portfolio / Leaderboard / Predict); Daily Report Reveal with
-scroll-triggered line-by-line animation; animated leaderboard; interactive prediction
-card; Rabbit Hole visual chain 6 levels deep; unlock-progression timeline;
-teacher/student view toggle; stats bar with real database numbers; final CTA with a
-class-code input that pre-fills onboarding.
+## Phase 15 — Landing Page ("Network Vista" rebuild)
+**Design pivot (2026-06-16):** the original 10-section concept and a WebGL/Three.js
+"A market is waking" crown hero were both rejected. The landing is now the
+**"Network Vista"** design (Antigravity export, Option 41): React 18 + inline styles,
+animated 2D `<canvas>` plexus backgrounds, **zero new dependencies**. Four sections:
+
+- **Hero** — animated S-curve cream/black canvas + plexus; live stock-ticker mockup
+  card (3D tilt); two CTAs → onboarding (Create a Class / Join a Class).
+- **Features** — frosted-glass capability cards over a plexus canvas.
+- **Steps** — cream section, three black "how it works" step cards.
+- **CTA + footer** — dark CTA with onboarding buttons.
+
+Files: `src/components/landing/*` (NetworkVistaPage, Navbar, HeroSection,
+DashboardMockup, FeaturesSection, StepsSection, CtaSection) + `src/hooks/`
+(useHeroCanvas, usePlexusCanvas, useLandingData). Mounted at `/` via the
+repurposed `Entry.jsx` (auth-redirect logic preserved).
+
+**Live data:** `useLandingData` feeds the mockup card real Finnhub quotes
+(AAPL/NVDA/TSLA/MSFT prices + % change) and a real AAPL 1-month chart line via the
+existing market proxy (`api.js`). `portfolioValue` / `portfolioDirection` remain
+fixed illustrative placeholders (no real classroom usage on the public landing).
+Required Google Fonts (Plus Jakarta Sans + Cabinet Grotesk) added to `index.html`.
+
+> Note: Cabinet Grotesk is a Fontshare font (not on Google Fonts); the README's
+> Google Fonts link is in place but headings fall back to sans-serif until it's
+> served from Fontshare — minor follow-up.
 
 ## Phase 16 — Mobile Responsive
 Responsive design across all pages.

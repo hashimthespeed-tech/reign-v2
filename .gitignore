@@ -20,6 +20,14 @@ dist-ssr
 # Netlify
 .netlify
 
+# Superpowers visual brainstorming scratch
+.superpowers/
+
+# Hero design assets (HDRIs, PBR textures, crown model, backdrops, LUT, refs).
+# Kept on disk for future hero work but not committed (509MB; unused by the
+# current Network Vista landing; texture/LUT .zips exceed GitHub's file limit).
+public/hero/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
