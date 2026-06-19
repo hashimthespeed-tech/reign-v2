@@ -124,7 +124,7 @@ function CodeStep({ prefill, userId, onFound, onApproved, onPending }) {
   return (
     <OnboardingShell>
       <div style={{ marginBottom: 24 }}><Logo size={18} /></div>
-      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.025em', marginBottom: 6 }}>
+      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 6 }}>
         Enter your class code
       </h2>
       <p style={{ color: colors.textMuted, marginBottom: 24 }}>Your teacher gave you a 6-character code.</p>
@@ -180,7 +180,7 @@ function IdentityStep({ userId, onDone }) {
   return (
     <OnboardingShell>
       <div style={{ marginBottom: 24 }}><Logo size={18} /></div>
-      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.025em', marginBottom: 6 }}>
+      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 6 }}>
         Build your identity
       </h2>
       <p style={{ color: colors.textMuted, marginBottom: 24 }}>This is the name on the leaderboard.</p>
@@ -233,7 +233,7 @@ function StocksStep({ selected, setSelected, onDone }) {
   return (
     <OnboardingShell maxWidth={560}>
       <div style={{ marginBottom: 22 }}><Logo size={18} /></div>
-      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.025em', marginBottom: 6 }}>
+      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 6 }}>
         Pick your first stocks
       </h2>
       <p style={{ color: colors.textMuted, marginBottom: 4 }}>
@@ -310,7 +310,7 @@ function WaitingScreen({ userId, classInfo, tickers, onApproved }) {
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 22 }}>
           <Spinner size={34} />
         </div>
-        <h2 style={{ fontFamily: font.display, fontSize: 26, fontWeight: 900, letterSpacing: '-0.025em' }}>
+        <h2 style={{ fontFamily: font.display, fontSize: 26, fontWeight: 900, letterSpacing: '-0.03em' }}>
           Your request is in
         </h2>
         <p style={{ color: colors.textMuted, marginTop: 10, lineHeight: 1.55 }}>
@@ -329,7 +329,7 @@ function RevealStep({ onDone }) {
     <OnboardingShell>
       <Card ink style={{ padding: 40, textAlign: 'center' }}>
         <div style={{ marginBottom: 18 }}><Logo size={22} color="#ffffff" /></div>
-        <h2 style={{ fontFamily: font.display, fontSize: 30, fontWeight: 900, letterSpacing: '-0.025em', color: '#ffffff' }}>You're in.</h2>
+        <h2 style={{ fontFamily: font.display, fontSize: 30, fontWeight: 900, letterSpacing: '-0.03em', color: '#ffffff' }}>You're in.</h2>
         <p style={{ color: 'rgba(255,255,255,0.6)', marginTop: 10 }}>Taking you to your dashboard…</p>
       </Card>
     </OnboardingShell>

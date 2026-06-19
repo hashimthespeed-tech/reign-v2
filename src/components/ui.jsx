@@ -1,29 +1,24 @@
 import { colors, font, radius, shadow } from '../theme'
 
 // ---------- Brand wordmark ----------
+// Matches the landing page exactly: REIGN in Cabinet Grotesk 900, tight
+// tracking, followed by a small dot. `withMark` toggles the dot.
 export function Logo({ size = 22, withMark = true, color = colors.text }) {
+  const dot = Math.round(size * 0.3)
   return (
-    <div style={{ display: 'inline-flex', alignItems: 'center', gap: size * 0.45 }}>
-      {withMark && (
-        <svg width={size * 1.15} height={size * 0.9} viewBox="0 0 28 22" fill="none">
-          <path
-            d="M2 19 L4.5 6 L10 12 L14 3 L18 12 L23.5 6 L26 19 Z"
-            fill={colors.gold}
-            stroke={colors.gold}
-            strokeWidth="1.2"
-            strokeLinejoin="round"
-          />
-          <circle cx="4.5" cy="5" r="2" fill={colors.goldSoft} />
-          <circle cx="14" cy="2.2" r="2" fill={colors.goldSoft} />
-          <circle cx="23.5" cy="5" r="2" fill={colors.goldSoft} />
-        </svg>
-      )}
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: Math.round(size * 0.4) }}>
       <span style={{
-        fontFamily: font.display, fontWeight: 800, fontSize: size * 1.12,
-        letterSpacing: '0.1em', color, paddingLeft: '0.05em',
+        fontFamily: font.display, fontWeight: 900, fontSize: size * 1.12,
+        letterSpacing: '-0.02em', color, lineHeight: 1,
       }}>
         REIGN
       </span>
+      {withMark && (
+        <span style={{
+          width: dot, height: dot, borderRadius: '50%',
+          background: color, display: 'inline-block', flexShrink: 0,
+        }} />
+      )}
     </div>
   )
 }

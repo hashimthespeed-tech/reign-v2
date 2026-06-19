@@ -96,7 +96,7 @@ function ProfileStep({ onDone, userId }) {
   return (
     <OnboardingShell>
       <div style={{ marginBottom: 24 }}><Logo size={18} /></div>
-      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.025em', marginBottom: 6 }}>
+      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 6 }}>
         Tell us who you are
       </h2>
       <p style={{ color: colors.textMuted, marginBottom: 24 }}>This is how your students will know you.</p>
@@ -129,7 +129,7 @@ function ClassConfigStep({ config, setConfig, onDone }) {
   return (
     <OnboardingShell>
       <div style={{ marginBottom: 24 }}><Logo size={18} /></div>
-      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.025em', marginBottom: 6 }}>
+      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 6 }}>
         Build your class
       </h2>
       <p style={{ color: colors.textMuted, marginBottom: 24 }}>Set the rules of the game.</p>
@@ -226,7 +226,7 @@ function SettingsStep({ settings, setSettings, config, userId, onCreated }) {
   return (
     <OnboardingShell maxWidth={500}>
       <div style={{ marginBottom: 24 }}><Logo size={18} /></div>
-      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.025em', marginBottom: 6 }}>
+      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 6 }}>
         Class settings
       </h2>
       <p style={{ color: colors.textMuted, marginBottom: 10 }}>You can change these later.</p>
@@ -255,7 +255,7 @@ function RevealStep({ cls, onDone }) {
   return (
     <OnboardingShell>
       <div style={{ textAlign: 'center', marginBottom: 26 }}><Logo size={18} /></div>
-      <h2 style={{ fontFamily: font.display, fontSize: 30, fontWeight: 900, letterSpacing: '-0.025em', textAlign: 'center' }}>
+      <h2 style={{ fontFamily: font.display, fontSize: 30, fontWeight: 900, letterSpacing: '-0.03em', textAlign: 'center' }}>
         Your class is live
       </h2>
       <p style={{ color: colors.textMuted, textAlign: 'center', marginTop: 8, marginBottom: 26 }}>

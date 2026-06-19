@@ -5,7 +5,7 @@ import { Logo, Button, Field, Input, Tabs, OnboardingShell } from '../../compone
 
 // Cabinet Grotesk display heading style — matches the landing page.
 const displayHeading = {
-  fontFamily: font.display, fontWeight: 900, letterSpacing: '-0.025em',
+  fontFamily: font.display, fontWeight: 900, letterSpacing: '-0.03em',
 }
 
 // ---------- Step 0: branded boot screen ----------
@@ -41,7 +41,7 @@ export function WelcomeScreen({ role, onContinue }) {
       <h1 style={{ ...displayHeading, fontSize: 40, lineHeight: 1.05 }}>
         {teacher ? 'Run the market.' : 'Take your throne.'}
       </h1>
-      <p style={{ color: colors.textMuted, fontSize: 16.5, lineHeight: 1.55, marginTop: 16 }}>
+      <p style={{ color: '#374151', fontSize: 16.5, lineHeight: 1.55, marginTop: 16 }}>
         {teacher
           ? 'Set up a class in minutes. Your students trade real stocks with real market data — and learn how money actually moves. You watch it all unfold.'
           : 'Real stocks. Real market data. No real risk. Build the best portfolio in your class, predict the market, and prove you belong at #1.'}
