@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 *,
 *::before,
@@ -9,9 +9,9 @@
 }
 
 :root {
-  color-scheme: dark;
-  --bg: #06070A;
-  --gold: #E8B339;
+  color-scheme: light;
+  --bg: #f4f3ef;
+  --gold: #c5a059;
 }
 
 html,
@@ -22,23 +22,23 @@ body,
 
 body {
   background: var(--bg);
-  color: #F4F5F7;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #0a0a0c;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
 }
 
-/* Subtle ambient radial behind everything */
+/* Subtle ambient warm radial behind everything */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(1100px 600px at 75% -10%, rgba(232, 179, 57, 0.06), transparent 60%),
-    radial-gradient(900px 500px at 10% 110%, rgba(91, 141, 239, 0.05), transparent 55%);
+    radial-gradient(1100px 600px at 75% -10%, rgba(197, 160, 89, 0.10), transparent 60%),
+    radial-gradient(900px 500px at 10% 110%, rgba(197, 160, 89, 0.05), transparent 55%);
   pointer-events: none;
 }
 
@@ -58,14 +58,14 @@ input, textarea, select {
 }
 
 ::selection {
-  background: rgba(232, 179, 57, 0.3);
-  color: #fff;
+  background: rgba(197, 160, 89, 0.35);
+  color: #0a0a0c;
 }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #1E222B; border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: #2A2F3A; }
+::-webkit-scrollbar-thumb { background: rgba(10,10,12,0.18); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(10,10,12,0.30); }
 
 @keyframes reign-spin { to { transform: rotate(360deg); } }
 @keyframes reign-fade-up {
@@ -86,6 +86,6 @@ input, textarea, select {
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 @keyframes reign-crown-glow {
-  0%, 100% { filter: drop-shadow(0 0 12px rgba(232,179,57,0.5)); }
-  50% { filter: drop-shadow(0 0 30px rgba(232,179,57,0.9)); }
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(197,160,89,0.5)); }
+  50% { filter: drop-shadow(0 0 30px rgba(197,160,89,0.9)); }
 }

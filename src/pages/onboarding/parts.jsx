@@ -3,6 +3,11 @@ import { supabase } from '../../lib/supabase'
 import { colors, font } from '../../theme'
 import { Logo, Button, Field, Input, Tabs, OnboardingShell } from '../../components/ui'
 
+// Cabinet Grotesk display heading style — matches the landing page.
+const displayHeading = {
+  fontFamily: font.display, fontWeight: 900, letterSpacing: '-0.025em',
+}
+
 // ---------- Step 0: branded boot screen ----------
 export function BootScreen({ onDone }) {
   useEffect(() => {
@@ -33,7 +38,7 @@ export function WelcomeScreen({ role, onContinue }) {
   return (
     <OnboardingShell>
       <div style={{ marginBottom: 30 }}><Logo size={20} /></div>
-      <h1 style={{ fontSize: 34, fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1.1 }}>
+      <h1 style={{ ...displayHeading, fontSize: 40, lineHeight: 1.05 }}>
         {teacher ? 'Run the market.' : 'Take your throne.'}
       </h1>
       <p style={{ color: colors.textMuted, fontSize: 16.5, lineHeight: 1.55, marginTop: 16 }}>
@@ -98,7 +103,7 @@ export function AuthStep({ role, onCreated, onLogin }) {
   return (
     <OnboardingShell>
       <div style={{ marginBottom: 26 }}><Logo size={18} /></div>
-      <h2 style={{ fontSize: 25, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 22 }}>
+      <h2 style={{ ...displayHeading, fontSize: 28, marginBottom: 22 }}>
         {role === 'teacher' ? 'Teacher account' : 'Your account'}
       </h2>
 

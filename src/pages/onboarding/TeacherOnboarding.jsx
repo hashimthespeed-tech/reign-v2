@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
-import { colors, radius } from '../../theme'
+import { colors, radius, font } from '../../theme'
 import { generateClassCode, ACCOUNT_TYPES } from '../../lib/constants'
 import { Logo, Button, Field, Input, Toggle, Card, OnboardingShell } from '../../components/ui'
 import { BootScreen, WelcomeScreen, AuthStep } from './parts'
@@ -96,7 +96,7 @@ function ProfileStep({ onDone, userId }) {
   return (
     <OnboardingShell>
       <div style={{ marginBottom: 24 }}><Logo size={18} /></div>
-      <h2 style={{ fontSize: 25, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 6 }}>
+      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.025em', marginBottom: 6 }}>
         Tell us who you are
       </h2>
       <p style={{ color: colors.textMuted, marginBottom: 24 }}>This is how your students will know you.</p>
@@ -129,7 +129,7 @@ function ClassConfigStep({ config, setConfig, onDone }) {
   return (
     <OnboardingShell>
       <div style={{ marginBottom: 24 }}><Logo size={18} /></div>
-      <h2 style={{ fontSize: 25, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 6 }}>
+      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.025em', marginBottom: 6 }}>
         Build your class
       </h2>
       <p style={{ color: colors.textMuted, marginBottom: 24 }}>Set the rules of the game.</p>
@@ -226,7 +226,7 @@ function SettingsStep({ settings, setSettings, config, userId, onCreated }) {
   return (
     <OnboardingShell maxWidth={500}>
       <div style={{ marginBottom: 24 }}><Logo size={18} /></div>
-      <h2 style={{ fontSize: 25, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 6 }}>
+      <h2 style={{ fontFamily: font.display, fontSize: 29, fontWeight: 900, letterSpacing: '-0.025em', marginBottom: 6 }}>
         Class settings
       </h2>
       <p style={{ color: colors.textMuted, marginBottom: 10 }}>You can change these later.</p>
@@ -255,25 +255,29 @@ function RevealStep({ cls, onDone }) {
   return (
     <OnboardingShell>
       <div style={{ textAlign: 'center', marginBottom: 26 }}><Logo size={18} /></div>
-      <h2 style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em', textAlign: 'center' }}>
+      <h2 style={{ fontFamily: font.display, fontSize: 30, fontWeight: 900, letterSpacing: '-0.025em', textAlign: 'center' }}>
         Your class is live
       </h2>
       <p style={{ color: colors.textMuted, textAlign: 'center', marginTop: 8, marginBottom: 26 }}>
         Share this code. Students enter it to request to join.
       </p>
 
-      <Card glow style={{ padding: 28, textAlign: 'center', marginBottom: 18 }}>
-        <div style={{ fontSize: 12.5, color: colors.textFaint, letterSpacing: '0.18em', marginBottom: 12 }}>
+      <Card ink style={{ padding: 28, textAlign: 'center', marginBottom: 18 }}>
+        <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.18em', marginBottom: 12 }}>
           CLASS CODE
         </div>
         <div style={{
-          fontFamily: "'JetBrains Mono', monospace", fontSize: 46, fontWeight: 700,
-          letterSpacing: '0.18em', color: colors.gold, paddingLeft: '0.18em',
+          fontFamily: font.mono, fontSize: 46, fontWeight: 700,
+          letterSpacing: '0.18em', color: colors.goldSoft, paddingLeft: '0.18em',
         }}>
           {cls.class_code}
         </div>
         <div style={{ marginTop: 18 }}>
-          <Button variant="secondary" onClick={copy}>
+          <Button
+            variant="secondary"
+            onClick={copy}
+            style={{ background: 'transparent', color: '#ffffff', border: '1px solid rgba(255,255,255,0.25)' }}
+          >
             {copied ? 'Copied ✓' : 'Copy code'}
           </Button>
         </div>

@@ -19,8 +19,8 @@ export function Logo({ size = 22, withMark = true, color = colors.text }) {
         </svg>
       )}
       <span style={{
-        fontFamily: font.mono, fontWeight: 600, fontSize: size,
-        letterSpacing: '0.34em', color, paddingLeft: '0.17em',
+        fontFamily: font.display, fontWeight: 800, fontSize: size * 1.12,
+        letterSpacing: '0.1em', color, paddingLeft: '0.05em',
       }}>
         REIGN
       </span>
@@ -35,8 +35,8 @@ export function Button({
 }) {
   const base = {
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-    gap: 8, fontWeight: 600, fontSize: 15, padding: '13px 22px',
-    borderRadius: radius.md, transition: 'all 0.16s ease',
+    gap: 8, fontWeight: 600, fontSize: 15, padding: '13px 26px',
+    fontFamily: font.sans, borderRadius: radius.pill, transition: 'all 0.16s ease',
     width: full ? '100%' : 'auto',
     opacity: disabled || loading ? 0.55 : 1,
     cursor: disabled || loading ? 'not-allowed' : 'pointer',
@@ -44,11 +44,11 @@ export function Button({
   }
   const variants = {
     primary: {
-      background: `linear-gradient(180deg, ${colors.goldSoft}, ${colors.gold})`,
-      color: '#1A1405', boxShadow: '0 6px 20px rgba(232,179,57,0.22)',
+      background: colors.ink, color: '#ffffff',
+      border: `1px solid ${colors.ink}`,
     },
     secondary: {
-      background: colors.bgRaised, color: colors.text,
+      background: 'transparent', color: colors.text,
       border: `1px solid ${colors.borderStrong}`,
     },
     ghost: { background: 'transparent', color: colors.textMuted },
@@ -64,7 +64,7 @@ export function Button({
       onMouseDown={(e) => e.preventDefault()}
       {...props}
     >
-      {loading && <Spinner size={15} color={variant === 'primary' ? '#1A1405' : colors.text} />}
+      {loading && <Spinner size={15} color={variant === 'primary' ? '#ffffff' : colors.text} />}
       {children}
     </button>
   )
@@ -135,7 +135,8 @@ export function Toggle({ checked, onChange, label, description }) {
         <div style={{
           position: 'absolute', top: 2, left: checked ? 21 : 2,
           width: 21, height: 21, borderRadius: '50%',
-          background: checked ? '#1A1405' : colors.textMuted,
+          background: '#ffffff',
+          boxShadow: '0 1px 3px rgba(10,10,12,0.25)',
           transition: 'all 0.18s ease',
         }} />
       </div>
@@ -170,13 +171,20 @@ export function Tabs({ tabs, active, onChange }) {
 }
 
 // ---------- Card ----------
-export function Card({ children, style = {}, glow = false, ...props }) {
+// variant 'light' (default) — white surface on cream.
+// variant 'ink' — piano-black emphasis card (white text), matches the landing mockup.
+// glow — gold ring on light cards.
+export function Card({ children, style = {}, glow = false, ink = false, ...props }) {
+  const inkStyle = {
+    background: colors.ink, border: `1.5px solid ${colors.inkBorder}`,
+    borderRadius: radius.lg, boxShadow: shadow.ink, color: '#ffffff',
+  }
+  const lightStyle = {
+    background: colors.bgElevated, border: `1px solid ${colors.border}`,
+    borderRadius: radius.lg, boxShadow: glow ? shadow.glow : shadow.card,
+  }
   return (
-    <div {...props} style={{
-      background: colors.bgElevated, border: `1px solid ${colors.border}`,
-      borderRadius: radius.lg, boxShadow: glow ? shadow.glow : shadow.card,
-      ...style,
-    }}>
+    <div {...props} style={{ ...(ink ? inkStyle : lightStyle), ...style }}>
       {children}
     </div>
   )
