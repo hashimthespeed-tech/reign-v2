@@ -45,7 +45,7 @@ export default function MonthlyReport() {
         <BackLink onClick={() => navigate('/dashboard')} />
         <Card style={{ padding: 40, textAlign: 'center' }}>
           <div style={{ fontSize: 40, marginBottom: 10 }}>🔒</div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 8 }}>Monthly Behavioral Report</h1>
+          <h1 style={{ fontFamily: font.display, fontSize: 26, fontWeight: 900, letterSpacing: '-0.025em', marginBottom: 8 }}>Monthly Behavioral Report</h1>
           <div style={{ color: colors.textMuted, fontSize: 14.5, lineHeight: 1.6, maxWidth: 460, margin: '0 auto' }}>
             Your first behavioral report unlocks on <strong style={{ color: colors.gold }}>Day 30</strong>. It exposes the
             investor you actually are — your patterns, your worst trades, and the one thing to fix. {30 - joinDays} day{30 - joinDays === 1 ? '' : 's'} to go.
@@ -78,7 +78,7 @@ export default function MonthlyReport() {
         <>
           <div style={{ marginBottom: 18 }}>
             <div style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '0.1em', color: colors.gold }}>BEHAVIORAL REPORT · {monthLabel.toUpperCase()}</div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.3, marginTop: 8 }}>{report.report_text}</h1>
+            <h1 style={{ fontFamily: font.display, fontSize: 27, fontWeight: 900, letterSpacing: '-0.025em', lineHeight: 1.25, marginTop: 8 }}>{report.report_text}</h1>
             {delta != null && (
               <div style={{ marginTop: 10, fontSize: 14, color: colors.textMuted }}>
                 Portfolio this month: {fmtMoney(report.portfolio_start_value)} → {fmtMoney(report.portfolio_end_value)}{' '}

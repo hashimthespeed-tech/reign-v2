@@ -72,7 +72,7 @@ export default function SystemCheck() {
         <div style={{ fontFamily: font.mono, letterSpacing: '0.5em', fontSize: 13, color: colors.gold, marginBottom: 14, paddingLeft: '0.5em' }}>
           R E I G N
         </div>
-        <h1 style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.02em' }}>System Check</h1>
+        <h1 style={{ fontFamily: font.display, fontSize: 34, fontWeight: 900, letterSpacing: '-0.025em' }}>System Check</h1>
         <p style={{ color: colors.textMuted, marginTop: 8, fontSize: 15 }}>Infrastructure verification</p>
       </div>
 

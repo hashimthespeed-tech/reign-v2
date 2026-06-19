@@ -41,14 +41,14 @@ export default function CinematicUnlock({ type, onDismiss }) {
         <div style={{ marginTop: 22, fontSize: 12, fontWeight: 700, letterSpacing: '0.18em', color: colors.gold, animation: 'reign-fade-up 0.5s ease 0.35s both' }}>
           {c.tag}
         </div>
-        <h1 style={{ marginTop: 10, fontSize: 34, fontWeight: 800, letterSpacing: '-0.02em', animation: 'reign-fade-up 0.5s ease 0.5s both' }}>
+        <h1 style={{ fontFamily: font.display, marginTop: 10, fontSize: 38, fontWeight: 900, letterSpacing: '-0.025em', color: '#ffffff', animation: 'reign-fade-up 0.5s ease 0.5s both' }}>
           {c.title}
         </h1>
-        <p style={{ marginTop: 14, fontSize: 15.5, lineHeight: 1.6, color: colors.textMuted, animation: 'reign-fade-up 0.5s ease 0.65s both' }}>
+        <p style={{ marginTop: 14, fontSize: 15.5, lineHeight: 1.6, color: 'rgba(255,255,255,0.7)', animation: 'reign-fade-up 0.5s ease 0.65s both' }}>
           {c.body}
         </p>
         <div style={{ marginTop: 26, animation: 'reign-fade-up 0.5s ease 0.8s both' }}>
-          <Button onClick={onDismiss}>Claim it →</Button>
+          <Button onClick={onDismiss} style={{ background: '#ffffff', color: '#0a0a0c', border: '1px solid #ffffff' }}>Claim it →</Button>
         </div>
       </div>
     </div>

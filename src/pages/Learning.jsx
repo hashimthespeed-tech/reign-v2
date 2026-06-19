@@ -79,7 +79,7 @@ export default function Learning() {
 
   return (
     <StudentLayout>
-      <h1 style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 18 }}>Learning</h1>
+      <h1 style={{ fontFamily: font.display, fontSize: 30, fontWeight: 900, letterSpacing: '-0.025em', marginBottom: 18 }}>Learning</h1>
 
       {/* progress path */}
       <Card style={{ padding: 20, marginBottom: 16 }}>
@@ -180,7 +180,7 @@ function ConceptReader({ concept, done, onComplete, onClose }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
               <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.08em', color: colors.gold }}>{(CATEGORY_LABEL[concept.category] || concept.category).toUpperCase()} · {readTime(concept.content)} MIN</div>
-              <h2 style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.02em', marginTop: 6 }}>{concept.plain_english_name}</h2>
+              <h2 style={{ fontFamily: font.display, fontSize: 26, fontWeight: 900, letterSpacing: '-0.025em', marginTop: 6 }}>{concept.plain_english_name}</h2>
             </div>
             <button onClick={onClose} style={{ fontSize: 22, color: colors.textFaint }}>×</button>
           </div>

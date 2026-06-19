@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 import StudentLayout from '../components/StudentLayout'
 import Avatar from '../components/Avatar'
 import { Card, Button, Field, Input } from '../components/ui'
-import { colors, radius, space } from '../theme'
+import { colors, radius, space, font } from '../theme'
 import { INVESTOR_TYPES } from '../lib/constants'
 import {
   AVATAR_PRESETS, DEFAULT_AVATAR, TIMEZONES, DEFAULT_TZ,
@@ -152,7 +152,7 @@ export default function Settings() {
 
   return (
     <StudentLayout maxWidth={760}>
-      <h1 style={{ fontSize: 26, fontWeight: 800, margin: '4px 0 22px' }}>Settings</h1>
+      <h1 style={{ fontFamily: font.display, fontSize: 30, fontWeight: 900, letterSpacing: '-0.025em', margin: '4px 0 22px' }}>Settings</h1>
 
       {/* Profile */}
       <Section title="Profile" subtitle="How you show up in your class.">
