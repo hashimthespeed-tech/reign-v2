@@ -19,7 +19,8 @@ export default function StudentLayout({ children, maxWidth = 1040 }) {
     <div style={{ minHeight: '100vh', fontFamily: font.sans }}>
       <header style={{
         position: 'sticky', top: 0, zIndex: 20,
-        background: 'rgba(6,7,10,0.82)', backdropFilter: 'blur(12px)',
+        background: 'rgba(244,243,239,0.8)', backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         borderBottom: `1px solid ${colors.border}`,
       }}>
         <div style={{

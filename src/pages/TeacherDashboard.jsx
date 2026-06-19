@@ -183,7 +183,7 @@ export default function TeacherDashboard() {
                     {classes.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 )}
-                <h1 style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em' }}>{activeClass.name}</h1>
+                <h1 style={{ fontFamily: font.display, fontSize: 30, fontWeight: 900, letterSpacing: '-0.025em' }}>{activeClass.name}</h1>
               </div>
               <Button variant="secondary" style={{ fontSize: 13.5, padding: '9px 16px' }} onClick={downloadCSV}>Download report (CSV)</Button>
             </div>
@@ -376,7 +376,7 @@ function EditSettingsModal({ cls, onClose, onSaved }) {
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, zIndex: 50 }}>
       <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 460 }}>
         <Card style={{ padding: 24 }}>
-          <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 16 }}>Class settings</h3>
+          <h3 style={{ fontFamily: font.display, fontSize: 22, fontWeight: 900, letterSpacing: '-0.02em', marginBottom: 16 }}>Class settings</h3>
           <div style={{ fontSize: 13, fontWeight: 600, color: colors.textMuted, marginBottom: 7 }}>Class name</div>
           <Input value={name} onChange={(e) => setName(e.target.value)} style={{ marginBottom: 8 }} />
           {items.map(([k, label]) => (
@@ -397,7 +397,7 @@ function EditSettingsModal({ cls, onClose, onSaved }) {
 
 function TopBar({ onSignOut, onNewClass, name }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 22px', borderBottom: `1px solid ${colors.border}`, position: 'sticky', top: 0, background: 'rgba(6,7,10,0.85)', backdropFilter: 'blur(10px)', zIndex: 30 }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 22px', borderBottom: `1px solid ${colors.border}`, position: 'sticky', top: 0, background: 'rgba(244,243,239,0.8)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', zIndex: 30 }}>
       <Logo size={17} />
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         <Button variant="ghost" style={{ padding: '7px 12px', fontSize: 13 }} onClick={onNewClass}>+ New class</Button>

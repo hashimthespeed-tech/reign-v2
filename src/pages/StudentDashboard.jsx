@@ -147,7 +147,7 @@ export default function StudentDashboard() {
               {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
             </span>
           </div>
-          <h1 style={{ fontSize: 27, fontWeight: 800, letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontFamily: font.display, fontSize: 30, fontWeight: 900, letterSpacing: '-0.025em' }}>
             {getGreeting(et)}
           </h1>
         </div>
@@ -166,7 +166,7 @@ export default function StudentDashboard() {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 28, justifyContent: 'space-between' }}>
           <div>
             <div style={{ fontSize: 12.5, color: colors.textFaint, marginBottom: 6 }}>PORTFOLIO VALUE</div>
-            <div style={{ fontSize: 44, fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1 }}>
+            <div style={{ fontFamily: font.display, fontSize: 48, fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1 }}>
               {fmtMoney(p.totalValue)}
             </div>
             <div style={{ display: 'flex', gap: 18, marginTop: 14 }}>
@@ -327,8 +327,8 @@ function PredictionCard({ classInfo, et, stock, today, acc, streak, onPredict })
           </div>
           <div style={{ fontSize: 12.5, color: colors.textFaint, marginTop: 5 }}>Locks at 9:30 AM ET. You can't change it.</div>
           <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
-            <Button full loading={busy} onClick={() => call('up')} style={{ background: colors.greenDim, color: colors.greenSoft, border: `1px solid ${colors.green}` }}>▲ Up</Button>
-            <Button full loading={busy} onClick={() => call('down')} style={{ background: colors.redDim, color: colors.redSoft, border: `1px solid ${colors.red}` }}>▼ Down</Button>
+            <Button full loading={busy} onClick={() => call('up')} style={{ background: colors.greenDim, color: colors.green, border: `1px solid ${colors.green}` }}>▲ Up</Button>
+            <Button full loading={busy} onClick={() => call('down')} style={{ background: colors.redDim, color: colors.red, border: `1px solid ${colors.red}` }}>▼ Down</Button>
           </div>
           {err && <div style={{ color: colors.red, fontSize: 13, marginTop: 10 }}>{err}</div>}
         </>
@@ -356,7 +356,7 @@ function LockedPrediction({ today }) {
         You called <span style={{ fontFamily: font.mono, color: colors.gold }}>{today.ticker}</span> {dirLabel}.
       </div>
       {resolved ? (
-        <div style={{ marginTop: 10, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 999, background: correct ? colors.greenDim : colors.redDim, color: correct ? colors.greenSoft : colors.redSoft, fontWeight: 700, fontSize: 13.5 }}>
+        <div style={{ marginTop: 10, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 999, background: correct ? colors.greenDim : colors.redDim, color: correct ? colors.green : colors.red, fontWeight: 700, fontSize: 13.5 }}>
           {correct ? '✓ Correct' : '✗ Missed it'}
           {today.opening_price != null && <span style={{ fontWeight: 400, color: colors.textFaint }}>· {fmtMoney(today.opening_price)} → {fmtMoney(today.closing_price)}</span>}
         </div>
