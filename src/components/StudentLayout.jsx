@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { colors, font } from '../theme'
 import { Logo, Button } from './ui'
+import PlexusBackground from './PlexusBackground'
 
 const NAV = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -16,10 +17,11 @@ export default function StudentLayout({ children, maxWidth = 1040 }) {
   const { profile, signOut } = useAuth()
 
   return (
-    <div style={{ minHeight: '100vh', fontFamily: font.sans }}>
+    <div style={{ minHeight: '100vh', fontFamily: font.sans, position: 'relative' }}>
+      <PlexusBackground />
       <header style={{
         position: 'sticky', top: 0, zIndex: 20,
-        background: 'rgba(244,243,239,0.8)', backdropFilter: 'blur(20px)',
+        background: 'rgba(5,5,7,0.72)', backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         borderBottom: `1px solid ${colors.border}`,
       }}>
@@ -46,7 +48,7 @@ export default function StudentLayout({ children, maxWidth = 1040 }) {
         </div>
       </header>
 
-      <main style={{ maxWidth, margin: '0 auto', padding: '28px 22px 80px' }}>
+      <main style={{ maxWidth, margin: '0 auto', padding: '28px 22px 80px', position: 'relative', zIndex: 1 }}>
         {children}
       </main>
     </div>

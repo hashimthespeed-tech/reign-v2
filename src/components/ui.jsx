@@ -39,8 +39,8 @@ export function Button({
   }
   const variants = {
     primary: {
-      background: colors.ink, color: '#ffffff',
-      border: `1px solid ${colors.ink}`,
+      background: '#ffffff', color: '#0a0a0c',
+      border: '1px solid #ffffff',
     },
     secondary: {
       background: 'transparent', color: colors.text,
@@ -59,7 +59,7 @@ export function Button({
       onMouseDown={(e) => e.preventDefault()}
       {...props}
     >
-      {loading && <Spinner size={15} color={variant === 'primary' ? '#ffffff' : colors.text} />}
+      {loading && <Spinner size={15} color={variant === 'primary' ? '#0a0a0c' : colors.text} />}
       {children}
     </button>
   )
@@ -88,6 +88,7 @@ export function Field({ label, hint, error, children, style = {} }) {
 export function Input({ style = {}, invalid = false, ...props }) {
   return (
     <input
+      className="reign-dark-field"
       style={{
         width: '100%', padding: '12px 14px', fontSize: 15,
         background: colors.bgRaised, color: colors.text,
@@ -153,9 +154,9 @@ export function Tabs({ tabs, active, onChange }) {
           style={{
             flex: 1, padding: '10px', fontSize: 14, fontWeight: 600,
             borderRadius: radius.sm, transition: 'all 0.15s',
-            background: active === t.value ? colors.bgElevated : 'transparent',
+            background: active === t.value ? 'rgba(255,255,255,0.12)' : 'transparent',
             color: active === t.value ? colors.text : colors.textFaint,
-            boxShadow: active === t.value ? shadow.card : 'none',
+            border: `1px solid ${active === t.value ? 'rgba(255,255,255,0.14)' : 'transparent'}`,
           }}
         >
           {t.label}
@@ -166,20 +167,22 @@ export function Tabs({ tabs, active, onChange }) {
 }
 
 // ---------- Card ----------
-// variant 'light' (default) — white surface on cream.
-// variant 'ink' — piano-black emphasis card (white text), matches the landing mockup.
-// glow — gold ring on light cards.
+// Default — frosted glass surface floating over the plexus background.
+// variant 'ink' — solid piano-black emphasis card (matches the landing mockup).
+// glow — gold ring on cards.
 export function Card({ children, style = {}, glow = false, ink = false, ...props }) {
   const inkStyle = {
     background: colors.ink, border: `1.5px solid ${colors.inkBorder}`,
     borderRadius: radius.lg, boxShadow: shadow.ink, color: '#ffffff',
   }
-  const lightStyle = {
+  const frostedStyle = {
     background: colors.bgElevated, border: `1px solid ${colors.border}`,
     borderRadius: radius.lg, boxShadow: glow ? shadow.glow : shadow.card,
+    backdropFilter: 'blur(12px) saturate(1.2)',
+    WebkitBackdropFilter: 'blur(12px) saturate(1.2)',
   }
   return (
-    <div {...props} style={{ ...(ink ? inkStyle : lightStyle), ...style }}>
+    <div {...props} style={{ ...(ink ? inkStyle : frostedStyle), ...style }}>
       {children}
     </div>
   )

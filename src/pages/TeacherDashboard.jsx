@@ -7,6 +7,7 @@ import { getQuotes, askGroq } from '../lib/api'
 import { computePortfolio, fmtMoney, fmtPct } from '../lib/portfolio'
 import { nowET } from '../lib/market'
 import { Logo, Button, Card, Spinner, Toggle, Input } from '../components/ui'
+import PlexusBackground from '../components/PlexusBackground'
 
 const chg = (n) => (Number(n) > 0 ? colors.green : Number(n) < 0 ? colors.red : colors.textMuted)
 const flagsKey = (cid) => `reign_flags_${cid}`
@@ -161,12 +162,13 @@ export default function TeacherDashboard() {
   const inactive = roster.filter((r) => daysSince(r.lastActive) >= 3)
 
   return (
-    <div style={{ minHeight: '100vh', fontFamily: font.sans }}>
+    <div style={{ minHeight: '100vh', fontFamily: font.sans, position: 'relative' }}>
+      <PlexusBackground />
       <TopBar name={profile?.full_name || profile?.username}
         onSignOut={async () => { await signOut(); navigate('/') }}
         onNewClass={() => navigate('/onboarding/teacher')} />
 
-      <div style={{ maxWidth: 1040, margin: '0 auto', padding: '28px 22px 80px' }}>
+      <div style={{ maxWidth: 1040, margin: '0 auto', padding: '28px 22px 80px', position: 'relative', zIndex: 1 }}>
         {!activeClass ? (
           <Card style={{ padding: 32, textAlign: 'center' }}>
             <p style={{ color: colors.textMuted, marginBottom: 18 }}>You haven't created a class yet.</p>
@@ -397,7 +399,7 @@ function EditSettingsModal({ cls, onClose, onSaved }) {
 
 function TopBar({ onSignOut, onNewClass, name }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 22px', borderBottom: `1px solid ${colors.border}`, position: 'sticky', top: 0, background: 'rgba(244,243,239,0.8)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', zIndex: 30 }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 22px', borderBottom: `1px solid ${colors.border}`, position: 'sticky', top: 0, background: 'rgba(5,5,7,0.72)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', zIndex: 30 }}>
       <Logo size={17} />
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         <Button variant="ghost" style={{ padding: '7px 12px', fontSize: 13 }} onClick={onNewClass}>+ New class</Button>
