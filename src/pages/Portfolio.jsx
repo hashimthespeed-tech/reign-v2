@@ -77,7 +77,7 @@ export default function Portfolio() {
   return (
     <StudentLayout>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
-        <h1 style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em' }}>Portfolio</h1>
+        <h1 style={{ fontFamily: font.display, fontSize: 30, fontWeight: 900, letterSpacing: '-0.025em' }}>Portfolio</h1>
         <Button onClick={() => setModal({ mode: 'search' })}>Buy a stock</Button>
       </div>
 
@@ -282,7 +282,7 @@ function SearchPanel({ onPick }) {
   }, [q])
   return (
     <div>
-      <h3 style={{ fontSize: 19, fontWeight: 800, marginBottom: 14 }}>Find a stock</h3>
+      <h3 style={{ fontFamily: font.display, fontSize: 21, fontWeight: 900, letterSpacing: '-0.02em', marginBottom: 14 }}>Find a stock</h3>
       <Input autoFocus placeholder="Search ticker or company (e.g. NVDA, Tesla)" value={q} onChange={(e) => setQ(e.target.value)} />
       <div style={{ marginTop: 14, minHeight: 60 }}>
         {busy && <div style={{ display: 'flex', justifyContent: 'center', padding: 16 }}><Spinner size={20} /></div>}
@@ -336,7 +336,7 @@ function ThesisStep({ stock, thesis, setThesis, analysis, setAnalysis, p, onBack
 
   return (
     <div>
-      <h3 style={{ fontSize: 19, fontWeight: 800 }}>Why {stock.ticker}?</h3>
+      <h3 style={{ fontFamily: font.display, fontSize: 21, fontWeight: 900, letterSpacing: '-0.02em' }}>Why {stock.ticker}?</h3>
       <p style={{ color: colors.textMuted, fontSize: 13.5, margin: '6px 0 14px' }}>
         Write your reasoning — at least two sentences. Reign will pressure-test it. You can always continue.
       </p>
@@ -496,7 +496,7 @@ function SellDipWarning({ ticker }) {
 
 function Warn({ text }) {
   return (
-    <div style={{ marginTop: 12, padding: 11, background: colors.redDim, border: `1px solid ${colors.red}`, borderRadius: radius.sm, fontSize: 13, color: colors.redSoft }}>
+    <div style={{ marginTop: 12, padding: 11, background: colors.redDim, border: `1px solid ${colors.red}`, borderRadius: radius.sm, fontSize: 13, color: colors.red }}>
       {text}
     </div>
   )

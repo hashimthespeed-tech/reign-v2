@@ -53,7 +53,7 @@ export default function Leaderboard() {
 
   return (
     <StudentLayout>
-      <h1 style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 18 }}>Leaderboard</h1>
+      <h1 style={{ fontFamily: font.display, fontSize: 30, fontWeight: 900, letterSpacing: '-0.025em', marginBottom: 18 }}>Leaderboard</h1>
 
       {/* weekly narrative */}
       <Card style={{ padding: 20, marginBottom: 16 }}>
