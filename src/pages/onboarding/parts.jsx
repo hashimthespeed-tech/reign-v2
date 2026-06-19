@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
-import { colors, font } from '../../theme'
-import { Logo, Button, Field, Input, Tabs, OnboardingShell } from '../../components/ui'
+import { font } from '../../theme'
+import { dark as colors, Logo, Button, Field, Input, Tabs, OnboardingShell } from './darkUi'
 
 // Cabinet Grotesk display heading style — matches the landing page.
 const displayHeading = {
-  fontFamily: font.display, fontWeight: 900, letterSpacing: '-0.03em',
+  fontFamily: font.display, fontWeight: 900, letterSpacing: '-0.03em', color: '#ffffff',
 }
 
 // ---------- Step 0: branded boot screen ----------
@@ -15,20 +15,19 @@ export function BootScreen({ onDone }) {
     return () => clearTimeout(t)
   }, [onDone])
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', gap: 18,
-    }}>
-      <div style={{ animation: 'reign-fade-up 0.7s ease both', transform: 'scale(1.4)' }}>
-        <Logo size={30} />
+    <OnboardingShell card={false} maxWidth={320}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
+        <div style={{ animation: 'reign-fade-up 0.7s ease both', transform: 'scale(1.4)' }}>
+          <Logo size={30} />
+        </div>
+        <div style={{
+          fontFamily: font.mono, fontSize: 12.5, color: 'rgba(255,255,255,0.45)',
+          letterSpacing: '0.25em', animation: 'reign-pulse 1.6s ease-in-out infinite',
+        }}>
+          LOADING THE FLOOR
+        </div>
       </div>
-      <div style={{
-        fontFamily: font.mono, fontSize: 12.5, color: colors.textFaint,
-        letterSpacing: '0.25em', animation: 'reign-pulse 1.6s ease-in-out infinite',
-      }}>
-        LOADING THE FLOOR
-      </div>
-    </div>
+    </OnboardingShell>
   )
 }
 
@@ -36,12 +35,12 @@ export function BootScreen({ onDone }) {
 export function WelcomeScreen({ role, onContinue }) {
   const teacher = role === 'teacher'
   return (
-    <OnboardingShell>
+    <OnboardingShell card={false}>
       <div style={{ marginBottom: 30 }}><Logo size={20} /></div>
-      <h1 style={{ ...displayHeading, fontSize: 40, lineHeight: 1.05 }}>
+      <h1 style={{ ...displayHeading, fontSize: 46, lineHeight: 1.05 }}>
         {teacher ? 'Run the market.' : 'Take your throne.'}
       </h1>
-      <p style={{ color: '#374151', fontSize: 16.5, lineHeight: 1.55, marginTop: 16 }}>
+      <p style={{ color: colors.textMuted, fontSize: 17, lineHeight: 1.55, marginTop: 16 }}>
         {teacher
           ? 'Set up a class in minutes. Your students trade real stocks with real market data — and learn how money actually moves. You watch it all unfold.'
           : 'Real stocks. Real market data. No real risk. Build the best portfolio in your class, predict the market, and prove you belong at #1.'}

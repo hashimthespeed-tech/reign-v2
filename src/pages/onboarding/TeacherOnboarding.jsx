@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
-import { colors, radius, font } from '../../theme'
+import { radius, font } from '../../theme'
 import { generateClassCode, ACCOUNT_TYPES } from '../../lib/constants'
-import { Logo, Button, Field, Input, Toggle, Card, OnboardingShell } from '../../components/ui'
+import { dark as colors, Logo, Button, Field, Input, Toggle, Card, OnboardingShell } from './darkUi'
 import { BootScreen, WelcomeScreen, AuthStep } from './parts'
 
 export default function TeacherOnboarding() {

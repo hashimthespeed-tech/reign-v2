@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../contexts/AuthContext'
-import { colors, radius, font } from '../../theme'
+import { radius, font } from '../../theme'
 import { STOCK_CATEGORIES, INVESTOR_TYPES, TICKER_NAMES } from '../../lib/constants'
-import { Logo, Button, Field, Input, Card, Spinner, OnboardingShell } from '../../components/ui'
+import { dark as colors, Logo, Button, Field, Input, Card, Spinner, OnboardingShell } from './darkUi'
 import { BootScreen, WelcomeScreen, AuthStep } from './parts'
 
 // Idempotent: link student to class, create portfolio + watchlist holdings.
@@ -305,7 +305,7 @@ function WaitingScreen({ userId, classInfo, tickers, onApproved }) {
   }, [userId, classInfo, onApproved])
 
   return (
-    <OnboardingShell>
+    <OnboardingShell card={false}>
       <Card style={{ padding: 36, textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 22 }}>
           <Spinner size={34} />
@@ -326,7 +326,7 @@ function WaitingScreen({ userId, classInfo, tickers, onApproved }) {
 function RevealStep({ onDone }) {
   useEffect(() => { const t = setTimeout(onDone, 1400); return () => clearTimeout(t) }, [onDone])
   return (
-    <OnboardingShell>
+    <OnboardingShell card={false}>
       <Card ink style={{ padding: 40, textAlign: 'center' }}>
         <div style={{ marginBottom: 18 }}><Logo size={22} color="#ffffff" /></div>
         <h2 style={{ fontFamily: font.display, fontSize: 30, fontWeight: 900, letterSpacing: '-0.03em', color: '#ffffff' }}>You're in.</h2>

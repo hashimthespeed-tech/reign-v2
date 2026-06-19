@@ -44,6 +44,9 @@ body::before {
 
 a { color: inherit; text-decoration: none; }
 
+/* Dark onboarding inputs — readable placeholder on the black card */
+.reign-dark-field::placeholder { color: rgba(255, 255, 255, 0.32); }
+
 button {
   font-family: inherit;
   cursor: pointer;
