@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { Spinner } from './components/ui'
 import Entry from './pages/Entry'
+import Login from './pages/Login'
 import SystemCheck from './pages/SystemCheck'
 import TeacherOnboarding from './pages/onboarding/TeacherOnboarding'
 import StudentOnboarding from './pages/onboarding/StudentOnboarding'
@@ -46,6 +47,7 @@ export default function App() {
     <AuthProvider>
       <Routes>
         <Route path="/" element={<Entry />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/system" element={<SystemCheck />} />
         <Route path="/onboarding" element={<StudentOnboarding />} />
         <Route path="/onboarding/teacher" element={<TeacherOnboarding />} />

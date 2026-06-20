@@ -2,7 +2,7 @@
  * Navbar — fixed pill-shaped navigation bar.
  * onJoin / onCreateClass fire the navbar CTAs (wired to onboarding by the page).
  */
-export default function Navbar({ onJoin, onCreateClass }) {
+export default function Navbar({ onJoin, onCreateClass, onLogin }) {
   const navStyle = {
     position: 'fixed',
     top: '24px',
@@ -65,6 +65,22 @@ export default function Navbar({ onJoin, onCreateClass }) {
     cursor: 'pointer',
   };
 
+  // "Log in" rendered as a link-styled button so it matches the nav link type.
+  const loginLinkStyle = {
+    ...navLinkStyle,
+    background: 'none',
+    border: 'none',
+    padding: 0,
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+  };
+
+  const rightStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '22px',
+  };
+
   return (
     <nav style={navStyle}>
       <a href="#" style={logoStyle}>
@@ -77,7 +93,10 @@ export default function Navbar({ onJoin, onCreateClass }) {
         <a href="#" style={navLinkStyle}>AI Reports</a>
       </div>
 
-      <button style={btnStyle} onClick={onCreateClass}>Create Class</button>
+      <div style={rightStyle}>
+        <button style={loginLinkStyle} onClick={onLogin}>Log in</button>
+        <button style={btnStyle} onClick={onCreateClass}>Create Class</button>
+      </div>
     </nav>
   );
 }

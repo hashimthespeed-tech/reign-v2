@@ -11,7 +11,7 @@ import DashboardMockup from './DashboardMockup';
  * Props are passed through to DashboardMockup (see DashboardMockup.jsx for prop docs).
  * onJoin / onCreateClass fire the hero CTAs.
  */
-export default function HeroSection({ portfolioValue, portfolioDirection, stocks, chartPoints, primaryStockId, onJoin, onCreateClass }) {
+export default function HeroSection({ portfolioValue, portfolioDirection, stocks, chartPoints, primaryStockId, onJoin, onCreateClass, onLogin }) {
   const wrapperRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -126,18 +126,6 @@ export default function HeroSection({ portfolioValue, portfolioDirection, stocks
     fontFamily: "'Plus Jakarta Sans', sans-serif",
   };
 
-  const btnSecondaryStyle = {
-    backgroundColor: 'transparent',
-    color: '#0a0a0c',
-    border: '1px solid rgba(0,0,0,0.15)',
-    padding: '14px 28px',
-    fontSize: '0.95rem',
-    fontWeight: 600,
-    borderRadius: '100px',
-    cursor: 'pointer',
-    fontFamily: "'Plus Jakarta Sans', sans-serif",
-  };
-
   const visualStyle = {
     position: 'relative',
     display: 'flex',
@@ -149,7 +137,7 @@ export default function HeroSection({ portfolioValue, portfolioDirection, stocks
     <div ref={wrapperRef} style={wrapperStyle}>
       <canvas ref={canvasRef} style={canvasStyle} />
 
-      <Navbar onJoin={onJoin} onCreateClass={onCreateClass} />
+      <Navbar onJoin={onJoin} onCreateClass={onCreateClass} onLogin={onLogin} />
 
       <main style={containerStyle}>
         <section style={gridStyle}>
@@ -164,7 +152,7 @@ export default function HeroSection({ portfolioValue, portfolioDirection, stocks
             </p>
             <div style={ctasStyle}>
               <button style={btnPrimaryStyle} onClick={onCreateClass}>Create a Class</button>
-              <button style={btnSecondaryStyle} onClick={onJoin}>Join a Class</button>
+              <button style={btnPrimaryStyle} onClick={onJoin}>Join a Class</button>
             </div>
           </div>
 

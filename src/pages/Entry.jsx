@@ -41,6 +41,7 @@ export default function Entry() {
       primaryStockId={primaryStockId}
       onJoin={() => navigate('/onboarding')}
       onCreateClass={() => navigate('/onboarding/teacher')}
+      onLogin={() => navigate('/login')}
     />
   )
 }

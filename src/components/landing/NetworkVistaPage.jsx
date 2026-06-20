@@ -46,6 +46,7 @@ export default function NetworkVistaPage({
   primaryStockId,
   onJoin,
   onCreateClass,
+  onLogin,
 }) {
   const pageStyle = {
     margin: 0,
@@ -66,6 +67,7 @@ export default function NetworkVistaPage({
         primaryStockId={primaryStockId}
         onJoin={onJoin}
         onCreateClass={onCreateClass}
+        onLogin={onLogin}
       />
       <FeaturesSection />
       <StepsSection />
